@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "lodash-es": "^4.17.4",
+    "react": "^15.5.4"
+  }
+}
