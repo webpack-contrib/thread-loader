@@ -134,10 +134,15 @@ class PoolWorker {
           this.writeJson({
             type: 'result',
             id: questionId,
-            error,
+            error: error ? {
+              message: error.message,
+              details: error.details,
+              missing: error.missing,
+            } : null,
             result,
           });
         });
+        finalCallback();
         break;
       }
       case 'emitWarning': {

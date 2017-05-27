@@ -26,6 +26,14 @@ function toErrorObj(err) {
   };
 }
 
+function toNativeError(obj) {
+  if (!obj) return null;
+  const err = new Error(obj.message);
+  err.details = obj.details;
+  err.missing = obj.missing;
+  return err;
+}
+
 function writeJson(data) {
   const lengthBuffer = new Buffer(4);
   const messageBuffer = new Buffer(JSON.stringify(data), 'utf-8');
@@ -43,6 +51,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
       context: {
         version: 2,
         resolve: (context, request, callback) => {
+          callbackMap[nextQuestionId] = callback;
           writeJson({
             type: 'resolve',
             id,
@@ -50,7 +59,6 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
             context,
             request,
           });
-          callbackMap[nextQuestionId] = callback;
           nextQuestionId += 1;
         },
         emitWarning: (warning) => {
@@ -148,8 +156,12 @@ function onMessage(message) {
         const { error, result } = message;
         const callback = callbackMap[id];
         if (callback) {
-          callback(error, result);
+          const nativeError = toNativeError(error);
+          callback(nativeError, result);
+        } else {
+          console.error(`Worker got unexpected result id ${id}`);
         }
+        delete callbackMap[id];
         break;
       }
       default: {
