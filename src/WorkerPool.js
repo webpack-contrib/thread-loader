@@ -131,7 +131,7 @@ class PoolWorker {
         const { context, request, questionId } = message;
         const { data } = this.jobs[id];
         data.resolve(context, request, (error, result) => {
-          this.worker.send({
+          this.writeJson({
             type: 'result',
             id: questionId,
             error,
