@@ -38,6 +38,13 @@ class PoolWorker {
     });
   }
 
+  warmup(requires) {
+    this.writeJson({
+      type: 'warmup',
+      requires,
+    });
+  }
+
   writeJson(data) {
     const lengthBuffer = new Buffer(4);
     const messageBuffer = new Buffer(JSON.stringify(data), 'utf-8');
@@ -213,7 +220,6 @@ export default class WorkerPool {
     }
     this.activeJobs += 1;
     this.poolQueue.push(data, callback);
-    // this.distributeJob(data, callback);
   }
 
   distributeJob(data, callback) {
@@ -228,13 +234,24 @@ export default class WorkerPool {
       bestWorker.run(data, callback);
       return;
     }
+    const newWorker = this.createWorker();
+    newWorker.run(data, callback);
+  }
+
+  createWorker() {
     // spin up a new worker
     const newWorker = new PoolWorker({
       nodeArgs: this.workerNodeArgs,
       parallelJobs: this.workerParallelJobs,
     }, () => this.onJobDone());
     this.workers.add(newWorker);
-    newWorker.run(data, callback);
+    return newWorker;
+  }
+
+  warmup(requires) {
+    while (this.workers.size < this.numberOfWorkers) {
+      this.createWorker().warmup(requires);
+    }
   }
 
   onJobDone() {

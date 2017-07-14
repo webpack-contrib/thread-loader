@@ -1,22 +1,9 @@
-import os from 'os';
 import loaderUtils from 'loader-utils';
-import WorkerPool from './WorkerPool';
-
-const workerPools = Object.create(null);
+import { getPool } from './workerPools';
 
 function pitch() {
   const options = loaderUtils.getOptions(this) || {};
-  const workerPoolOptions = {
-    name: options.name || '',
-    numberOfWorkers: options.workers || os.cpus().length,
-    workerNodeArgs: options.workerNodeArgs,
-    workerParallelJobs: options.workerParallelJobs || 20,
-    poolTimeout: options.poolTimeout || 500,
-    poolParallelJobs: options.poolParallelJobs || 200,
-  };
-  const tpKey = JSON.stringify(workerPoolOptions);
-  workerPools[tpKey] = workerPools[tpKey] || new WorkerPool(workerPoolOptions);
-  const workerPool = workerPools[tpKey];
+  const workerPool = getPool(options);
   const callback = this.async();
   workerPool.run({
     loaders: this.loaders.slice(this.loaderIndex + 1).map((l) => {
@@ -42,4 +29,9 @@ function pitch() {
   });
 }
 
-export { pitch }; // eslint-disable-line import/prefer-default-export
+function warmup(options, requires) {
+  const workerPool = getPool(options);
+  workerPool.warmup(requires);
+}
+
+export { pitch, warmup }; // eslint-disable-line import/prefer-default-export

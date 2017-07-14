@@ -1,4 +1,4 @@
-/* global self */
+/* global require */
 /* eslint-disable no-console */
 import fs from 'fs';
 import NativeModule from 'module';
@@ -35,6 +35,8 @@ function toNativeError(obj) {
 }
 
 function writeJson(data) {
+  writePipe.cork();
+  process.nextTick(() => writePipe.uncork());
   const lengthBuffer = new Buffer(4);
   const messageBuffer = new Buffer(JSON.stringify(data), 'utf-8');
   lengthBuffer.writeInt32BE(messageBuffer.length, 0);
@@ -115,8 +117,6 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
           data: item,
         };
       });
-      writePipe.cork();
-      process.nextTick(() => writePipe.uncork());
       writeJson({
         type: 'job',
         id,
@@ -162,6 +162,12 @@ function onMessage(message) {
           console.error(`Worker got unexpected result id ${id}`);
         }
         delete callbackMap[id];
+        break;
+      }
+      case 'warmup': {
+        const { requires } = message;
+        // load modules into process
+        requires.forEach(r => require(r)); // eslint-disable-line import/no-dynamic-require, global-require
         break;
       }
       default: {
