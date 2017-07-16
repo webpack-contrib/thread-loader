@@ -99,7 +99,7 @@ This boots the max number of workers in the pool and loads specified modules int
 ``` js
 const threadLoader = require('thread-loader');
 
-threadLoader.warup({
+threadLoader.warmup({
   // pool options, like passed to loader options
   // must match loader options to boot the correct pool
 }, [
