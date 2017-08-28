@@ -5,8 +5,17 @@ const threadLoader = require('thread-loader'); // eslint-disable-line import/no-
 module.exports = (env) => {
   const workerPool = {
     workers: +env.threads,
+    poolTimeout: env.watch ? Infinity : 2000,
   };
-  threadLoader.warmup(workerPool, ['babel-loader', 'babel-preset-env', 'sass-loader', 'css-loader']);
+  const workerPoolSass = {
+    workers: +env.threads,
+    workerParallelJobs: 2,
+    poolTimeout: env.watch ? Infinity : 2000,
+  };
+  if (+env.threads > 0) {
+    threadLoader.warmup(workerPool, ['babel-loader', 'babel-preset-env']);
+    threadLoader.warmup(workerPoolSass, ['sass-loader', 'css-loader']);
+  }
   return {
     context: __dirname,
     entry: ['react', 'lodash-es', './index.js'],
@@ -32,7 +41,7 @@ module.exports = (env) => {
             use: [
               env.threads !== 0 && {
                 loader: 'thread-loader',
-                options: workerPool,
+                options: workerPoolSass,
               },
               'css-loader',
               'sass-loader',
