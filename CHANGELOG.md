@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.1"></a>
+## [1.1.1](https://github.com/webpack-contrib/thread-loader/compare/v1.1.0...v1.1.1) (2017-08-28)
+
+
+### Bug Fixes
+
+* **context:** Pass context to loader ([29ced70](https://github.com/webpack-contrib/thread-loader/commit/29ced70))
+* **deps:** pass along result for dependencies ([19832ec](https://github.com/webpack-contrib/thread-loader/commit/19832ec))
+* **example:** fix for broken sass and add watch ([47ba43e](https://github.com/webpack-contrib/thread-loader/commit/47ba43e))
+
+
+
 <a name="1.1.0"></a>
 # [1.1.0](https://github.com/webpack-contrib/thread-loader/compare/v1.0.3...v1.1.0) (2017-07-14)
 

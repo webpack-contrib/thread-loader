@@ -1,6 +1,6 @@
 {
   "name": "thread-loader",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Runs the following loaders in a worker pool.",
   "main": "dist/cjs.js",
   "scripts": {
