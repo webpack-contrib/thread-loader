@@ -18,6 +18,7 @@ function pitch() {
     emitError: this.emitError,
     emitWarning: this.emitWarning,
     resolve: this.resolve,
+    optionsContext: this.options.context,
   }, (err, r) => {
     if (err) {
       callback(err);

@@ -84,7 +84,9 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
           module._compile(code, filename); // eslint-disable-line no-underscore-dangle
           return module.exports;
         },
-        options: {},
+        options: {
+          context: data.optionsContext,
+        },
         webpack: true,
         'thread-loader': true,
         sourceMap: data.sourceMap,
