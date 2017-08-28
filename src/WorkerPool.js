@@ -103,7 +103,7 @@ class PoolWorker {
               this.activeJobs -= 1;
               this.onJobDone();
               if (err) {
-                jobCallback(err instanceof Error ? err : new Error(err));
+                jobCallback(err instanceof Error ? err : new Error(err), arg);
               } else {
                 jobCallback(null, arg);
               }
@@ -114,22 +114,24 @@ class PoolWorker {
             callback(eachErr);
             return;
           }
+          let bufferPosition = 0;
+          if (result.result) {
+            result.result = result.result.map((r) => {
+              if (r.buffer) {
+                const buffer = buffers[bufferPosition];
+                bufferPosition += 1;
+                if (r.string) {
+                  return buffer.toString('utf-8');
+                }
+                return buffer;
+              }
+              return r.data;
+            });
+          }
           if (error) {
-            callback(this.fromErrorObj(error));
+            callback(this.fromErrorObj(error), result);
             return;
           }
-          let bufferPosition = 0;
-          result.result = result.result.map((r) => {
-            if (r.buffer) {
-              const buffer = buffers[bufferPosition];
-              bufferPosition += 1;
-              if (r.string) {
-                return buffer.toString('utf-8');
-              }
-              return buffer;
-            }
-            return r.data;
-          });
           callback(null, result);
         });
         break;
