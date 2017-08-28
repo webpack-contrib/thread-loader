@@ -20,12 +20,14 @@ function pitch() {
     resolve: this.resolve,
     optionsContext: this.options.context,
   }, (err, r) => {
+    if (r) {
+      r.fileDependencies.forEach(d => this.addDependency(d));
+      r.contextDependencies.forEach(d => this.addContextDependency(d));
+    }
     if (err) {
       callback(err);
       return;
     }
-    r.fileDependencies.forEach(d => this.addDependency(d));
-    r.contextDependencies.forEach(d => this.addContextDependency(d));
     callback(null, ...r.result);
   });
 }
