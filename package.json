@@ -20,7 +20,6 @@
     "prepublish": "npm run build",
     "release": "standard-version",
     "security": "nsp check",
-    "serve:dev": "nodemon $2 --exec babel-node",
     "test:watch": "jest --watch",
     "test:coverage": "jest --collectCoverageFrom='src/**/*.js' --coverage",
     "travis:coverage": "npm run test:coverage -- --runInBand",
