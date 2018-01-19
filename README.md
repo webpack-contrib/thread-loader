@@ -84,6 +84,10 @@ use: [
       // name of the pool
       // can be used to create different pools with elsewise identical options
       name: "my-pool"
+
+      // add additional stack trace to the error
+      // defaults to true
+      stack: true
     }
   },
   "expensive-loader"
