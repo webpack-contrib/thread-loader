@@ -187,11 +187,19 @@ class PoolWorker {
     const err = new Error(obj.message);
     err.message = obj.message;
     if (obj.stack) {
-      let additionalStack = '';
+      err.stack = `${obj.stack}\n\tThread Loader (Worker ${this.id})`;
       if (this.options.stack) {
-        additionalStack = `\n\tfrom thread-loader (worker ${this.id})\n${err.stack}`;
+        // Limit the err.stack manually in case stackTraces are to verbose
+        if (typeof this.options.stack === 'number') {
+          Error.stackTraceLimit = (this.options.stack);
+        }
+
+        err.stack += `\n\n${err.stack}`;
+      } else {
+        // Only the err.message
+        const message = stack => stack.split('\n')[0];
+        err.stack += `\n\n${message(err.stack)}`;
       }
-      err.stack = `${obj.stack}${additionalStack}`;
     }
     err.hideStack = obj.hideStack;
     err.details = obj.details;
@@ -210,6 +218,7 @@ class PoolWorker {
 export default class WorkerPool {
   constructor(options) {
     this.options = options || {};
+    this.stack = options.stack || false;
     this.numberOfWorkers = options.numberOfWorkers;
     this.poolTimeout = options.poolTimeout;
     this.workerNodeArgs = options.workerNodeArgs;
@@ -248,6 +257,7 @@ export default class WorkerPool {
   createWorker() {
     // spin up a new worker
     const newWorker = new PoolWorker({
+      stack: this.stack,
       nodeArgs: this.workerNodeArgs,
       parallelJobs: this.workerParallelJobs,
     }, () => this.onJobDone());
@@ -277,4 +287,3 @@ export default class WorkerPool {
     }
   }
 }
-
