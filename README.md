@@ -86,8 +86,8 @@ use: [
       name: "my-pool"
 
       // add additional stack trace to the error
-      // defaults to true
-      stack: true
+      // defaults to false
+      stack: false
     }
   },
   "expensive-loader"

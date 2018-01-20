@@ -11,7 +11,7 @@ function getPool(options) {
     workerParallelJobs: options.workerParallelJobs || 20,
     poolTimeout: options.poolTimeout || 500,
     poolParallelJobs: options.poolParallelJobs || 200,
-    stack: options.stack || true,
+    stack: options.stack || false,
   };
   const tpKey = JSON.stringify(workerPoolOptions);
   workerPools[tpKey] = workerPools[tpKey] || new WorkerPool(workerPoolOptions);

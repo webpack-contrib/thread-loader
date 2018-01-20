@@ -185,20 +185,12 @@ class PoolWorker {
       obj = arg;
     }
     const err = new Error(obj.message);
-    err.message = obj.message;
     if (obj.stack) {
-      err.stack = `${obj.stack}\n\tThread Loader (Worker ${this.id})`;
+      const objStack = `${obj.stack}\n\tThread Loader (Worker ${this.id})`;
       if (this.options.stack) {
-        // Limit the err.stack manually in case stackTraces are to verbose
-        if (typeof this.options.stack === 'number') {
-          Error.stackTraceLimit = (this.options.stack);
-        }
-
-        err.stack += `\n\n${err.stack}`;
+        err.stack += `${objStack}\n\n${err.stack}`;
       } else {
-        // Only the err.message
-        const message = stack => stack.split('\n')[0];
-        err.stack += `\n\n${message(err.stack)}`;
+        err.stack = `${objStack}`;
       }
     }
     err.hideStack = obj.hideStack;
