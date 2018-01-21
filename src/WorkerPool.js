@@ -185,13 +185,14 @@ class PoolWorker {
       obj = arg;
     }
     const err = new Error(obj.message);
+    err.message = obj.message;
     if (obj.stack) {
-      const objStack = `${obj.stack}\n\tThread Loader (Worker ${this.id})`;
-      if (this.options.stack) {
-        err.stack += `${objStack}\n\n${err.stack}`;
-      } else {
-        err.stack = `${objStack}`;
-      }
+      const trim = (errorObj) => {
+        const { stack, message } = errorObj;
+        const traceIndex = stack.indexOf(message) + message.length;
+        return stack.substr(traceIndex);
+      };
+      err.stack = `${obj.stack}\n\tfrom thread-loader (worker: ${this.id})\n${trim(err)}`;
     }
     err.hideStack = obj.hideStack;
     err.details = obj.details;
@@ -210,7 +211,6 @@ class PoolWorker {
 export default class WorkerPool {
   constructor(options) {
     this.options = options || {};
-    this.stack = options.stack || false;
     this.numberOfWorkers = options.numberOfWorkers;
     this.poolTimeout = options.poolTimeout;
     this.workerNodeArgs = options.workerNodeArgs;
@@ -249,7 +249,6 @@ export default class WorkerPool {
   createWorker() {
     // spin up a new worker
     const newWorker = new PoolWorker({
-      stack: this.stack,
       nodeArgs: this.workerNodeArgs,
       parallelJobs: this.workerParallelJobs,
     }, () => this.onJobDone());
