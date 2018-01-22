@@ -11,7 +11,6 @@ let workerId = 0;
 
 class PoolWorker {
   constructor(options, onJobDone) {
-    this.options = options;
     this.nextJobId = 0;
     this.jobs = Object.create(null);
     this.activeJobs = 0;
@@ -187,12 +186,13 @@ class PoolWorker {
     const err = new Error(obj.message);
     err.message = obj.message;
     if (obj.stack) {
-      const trim = (errorObj) => {
-        const { stack, message } = errorObj;
-        const traceIndex = stack.indexOf(message) + message.length;
-        return stack.substr(traceIndex);
+      const trim = (error) => {
+        const { stack, message } = error;
+        const trace = stack.indexOf(message) + message.length;
+        return stack.substr(trace);
       };
-      err.stack = `${obj.stack}\n\tfrom thread-loader (worker: ${this.id})\n${trim(err)}`;
+
+      err.stack = `${obj.stack}\nThread Loader (Worker ${this.id})\n\n${trim(err)}`;
     }
     err.hideStack = obj.hideStack;
     err.details = obj.details;
