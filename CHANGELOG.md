@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.3"></a>
+## [1.1.3](https://github.com/webpack-contrib/thread-loader/compare/v1.1.2...v1.1.3) (2018-02-07)
+
+
+### Bug Fixes
+
+* **WorkerPool:** trace stacks to avoid duplicated `err.messages` from workers ([#13](https://github.com/webpack-contrib/thread-loader/issues/13)) ([80dda4f](https://github.com/webpack-contrib/thread-loader/commit/80dda4f))
+
+
+
 <a name="1.1.2"></a>
 ## [1.1.2](https://github.com/webpack-contrib/thread-loader/compare/v1.1.1...v1.1.2) (2017-10-09)
 
