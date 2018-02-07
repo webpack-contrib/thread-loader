@@ -4,6 +4,7 @@ import childProcess from 'child_process';
 import asyncQueue from 'async/queue';
 import asyncMapSeries from 'async/mapSeries';
 import readBuffer from './readBuffer';
+import WorkerError from './WorkerError';
 
 const workerPath = require.resolve('./worker');
 
@@ -183,14 +184,7 @@ class PoolWorker {
     } else {
       obj = arg;
     }
-    const err = new Error(obj.message);
-    err.message = obj.message;
-    if (obj.stack) {
-      err.stack = `${obj.stack}\n\tfrom thread-loader (worker ${this.id})\n${err.stack}`;
-    }
-    err.hideStack = obj.hideStack;
-    err.details = obj.details;
-    return err;
+    return new WorkerError(obj, this.id);
   }
 
   readBuffer(length, callback) {
@@ -272,4 +266,3 @@ export default class WorkerPool {
     }
   }
 }
-
