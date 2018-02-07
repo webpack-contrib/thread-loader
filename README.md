@@ -45,7 +45,7 @@ module.exports = {
         include: path.resolve("src"),
         use: [
           "thread-loader",
-          // your expensive loader to thread
+          // your expensive loader (e.g babel-loader)
         ]
       }
     ]
@@ -86,7 +86,7 @@ use: [
       name: "my-pool"
     }
   },
-  // your expensive loader to thread
+  // your expensive loader (e.g babel-loader)
 ]
 ```
 
