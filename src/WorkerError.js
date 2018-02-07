@@ -1,16 +1,17 @@
-const stack = (origin, worker, workerId) => {
-  const originError = origin
+const stack = (err, worker, workerId) => {
+  const originError = err.stack
     .split('\n')
-    .filter(line => line.includes('at'));
+    .filter(line => line.trim().startsWith('at'));
 
   const workerError = worker
     .split('\n')
-    .filter(line => line.includes('at'))
-    .map(line => `${line} [Thread Loader (Worker ${workerId})]`);
+    .filter(line => line.trim().startsWith('at'));
 
   const diff = workerError.slice(0, workerError.length - originError.length).join('\n');
 
   originError.unshift(diff);
+  originError.unshift(err.message);
+  originError.unshift(`Thread Loader (Worker ${workerId})`);
 
   return originError.join('\n');
 };
@@ -23,8 +24,7 @@ class WorkerError extends Error {
 
     Error.captureStackTrace(this, this.constructor);
 
-    this.stack = stack(err.stack, this.stack, workerId);
-    // this.stack = [`Thread Loader (Worker ${workerId})`, err.message, this.stack].join('\n');
+    this.stack = stack(err, this.stack, workerId);
   }
 }
 
