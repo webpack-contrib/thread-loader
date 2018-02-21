@@ -18,7 +18,7 @@ function pitch() {
     emitError: this.emitError,
     emitWarning: this.emitWarning,
     resolve: this.resolve,
-    optionsContext: this.options.context,
+    optionsContext: this.rootContext || this.options.context,
   }, (err, r) => {
     if (r) {
       r.fileDependencies.forEach(d => this.addDependency(d));
