@@ -1,5 +1,5 @@
 const stack = (err, worker, workerId) => {
-  const originError = err.stack
+  const originError = (err.stack || '')
     .split('\n')
     .filter(line => line.trim().startsWith('at'));
 
