@@ -63,7 +63,7 @@
     "node": ">= 4.8 < 5.0.0 || >= 5.10"
   },
   "peerDependencies": {
-    "webpack": "^2.0.0 || ^3.0.0"
+    "webpack": "^2.0.0 || ^3.0.0 || ^4.0.0"
   },
   "repository": "https://github.com/webpack-contrib/thread-loader.git",
   "bugs": "https://github.com/webpack-contrib/thread-loader/issues",
