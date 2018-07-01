@@ -1,5 +1,5 @@
 import os from 'os';
-import WorkerPool from './WorkerPool';
+import WorkerPool from './WorkerPool2';
 
 const workerPools = Object.create(null);
 
