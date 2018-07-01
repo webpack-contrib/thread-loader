@@ -1,6 +1,6 @@
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin'); // eslint-disable-line import/no-extraneous-dependencies
-const threadLoader = require('thread-loader'); // eslint-disable-line import/no-extraneous-dependencies
+// const threadLoader = require('thread-loader'); // eslint-disable-line import/no-extraneous-dependencies
 
 module.exports = (env) => {
   const workerPool = {
@@ -12,10 +12,12 @@ module.exports = (env) => {
     workerParallelJobs: 2,
     poolTimeout: env.watch ? Infinity : 2000,
   };
-  if (+env.threads > 0) {
-    threadLoader.warmup(workerPool, ['babel-loader', 'babel-preset-env']);
-    threadLoader.warmup(workerPoolSass, ['sass-loader', 'css-loader']);
-  }
+
+  // TODO: fix me
+  // if (+env.threads > 0) {
+  //   threadLoader.warmup(workerPool, ['babel-loader', 'babel-preset-env']);
+  //   threadLoader.warmup(workerPoolSass, ['sass-loader', 'css-loader']);
+  // }
   return {
     context: __dirname,
     entry: ['react', 'lodash-es', './index.js'],
@@ -39,7 +41,7 @@ module.exports = (env) => {
           test: /\.scss$/,
           use: ExtractTextPlugin.extract({
             use: [
-              env.threads !== 0 && {
+              false && env.threads !== 0 && {
                 loader: 'thread-loader',
                 options: workerPoolSass,
               },
