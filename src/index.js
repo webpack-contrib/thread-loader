@@ -18,6 +18,9 @@ function pitch() {
     emitError: this.emitError,
     emitWarning: this.emitWarning,
     resolve: this.resolve,
+    target: this.target,
+    minimize: this.minimize,
+    resourceQuery: this.resourceQuery,
     optionsContext: this.rootContext || this.options.context,
   }, (err, r) => {
     if (r) {

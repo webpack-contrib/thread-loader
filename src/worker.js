@@ -90,6 +90,9 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
         webpack: true,
         'thread-loader': true,
         sourceMap: data.sourceMap,
+        target: data.target,
+        minimize: data.minimize,
+        resourceQuery: data.resourceQuery,
       },
     }, (err, lrResult) => {
       const {
