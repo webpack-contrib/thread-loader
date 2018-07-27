@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.2.0"></a>
+# [1.2.0](https://github.com/webpack-contrib/thread-loader/compare/v1.1.5...v1.2.0) (2018-07-27)
+
+
+### Features
+
+* add target, minimize and resourceQuery into context ([#25](https://github.com/webpack-contrib/thread-loader/issues/25)) ([f3c7a2c](https://github.com/webpack-contrib/thread-loader/commit/f3c7a2c))
+
+
+
 <a name="1.1.5"></a>
 ## [1.1.5](https://github.com/webpack-contrib/thread-loader/compare/v1.1.4...v1.1.5) (2018-02-26)
 
