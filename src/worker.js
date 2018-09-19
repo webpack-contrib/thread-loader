@@ -37,8 +37,8 @@ function toNativeError(obj) {
 function writeJson(data) {
   writePipe.cork();
   process.nextTick(() => writePipe.uncork());
-  const lengthBuffer = new Buffer(4);
-  const messageBuffer = new Buffer(JSON.stringify(data), 'utf-8');
+  const lengthBuffer = Buffer.alloc(4);
+  const messageBuffer = Buffer.from(JSON.stringify(data), 'utf-8');
   lengthBuffer.writeInt32BE(messageBuffer.length, 0);
   writePipe.write(lengthBuffer);
   writePipe.write(messageBuffer);
@@ -111,7 +111,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
           };
         }
         if (typeof item === 'string') {
-          const stringBuffer = new Buffer(item, 'utf-8');
+          const stringBuffer = Buffer.from(item, 'utf-8');
           buffersToSend.push(stringBuffer);
           return {
             buffer: true,

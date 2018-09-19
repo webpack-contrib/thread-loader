@@ -1,6 +1,6 @@
 export default function readBuffer(pipe, length, callback) {
   if (length === 0) {
-    callback(null, new Buffer(0));
+    callback(null, Buffer.alloc(0));
     return;
   }
   let remainingLength = length;
