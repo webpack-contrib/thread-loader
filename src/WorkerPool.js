@@ -47,15 +47,15 @@ class PoolWorker {
   }
 
   writeJson(data) {
-    const lengthBuffer = new Buffer(4);
-    const messageBuffer = new Buffer(JSON.stringify(data), 'utf-8');
+    const lengthBuffer = Buffer.alloc(4);
+    const messageBuffer = Buffer.from(JSON.stringify(data), 'utf-8');
     lengthBuffer.writeInt32BE(messageBuffer.length, 0);
     this.writePipe.write(lengthBuffer);
     this.writePipe.write(messageBuffer);
   }
 
   writeEnd() {
-    const lengthBuffer = new Buffer(4);
+    const lengthBuffer = Buffer.alloc(4);
     lengthBuffer.writeInt32BE(0, 0);
     this.writePipe.write(lengthBuffer);
   }
