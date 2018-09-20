@@ -1,4 +1,5 @@
 import os from 'os';
+
 import WorkerPool from './WorkerPool';
 
 const workerPools = Object.create(null);
