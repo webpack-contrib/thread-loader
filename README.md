@@ -128,6 +128,9 @@ threadLoader.warmup({
   <tbody>
 </table>
 
+## License
+
+#### [MIT](./LICENSE)
 
 [npm]: https://img.shields.io/npm/v/thread-loader.svg
 [npm-url]: https://npmjs.com/package/thread-loader
@@ -135,11 +138,11 @@ threadLoader.warmup({
 [deps]: https://david-dm.org/webpack-contrib/thread-loader.svg
 [deps-url]: https://david-dm.org/webpack-contrib/thread-loader
 
-[chat]: https://img.shields.io/badge/gitter-webpack%2Fwebpack-brightgreen.svg
-[chat-url]: https://gitter.im/webpack/webpack
-
-[test]: http://img.shields.io/travis/webpack-contrib/thread-loader.svg
-[test-url]: https://travis-ci.org/webpack-contrib/thread-loader
+[tests]: https://img.shields.io/circleci/project/github/webpack-contrib/thread-loader.svg
+[tests-url]: https://circleci.com/gh/webpack-contrib/thread-loader
 
 [cover]: https://codecov.io/gh/webpack-contrib/thread-loader/branch/master/graph/badge.svg
 [cover-url]: https://codecov.io/gh/webpack-contrib/thread-loader
+
+[chat]: https://img.shields.io/badge/gitter-webpack%2Fwebpack-brightgreen.svg
+[chat-url]: https://gitter.im/webpack/webpack
