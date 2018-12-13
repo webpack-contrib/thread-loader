@@ -34,7 +34,7 @@ jobs:
     - stage: Webpack canary
       before_script: npm i --no-save git://github.com/webpack/webpack.git#master
       script: npm run travis:$JOB_PART
-      node_js: 10
+      node_js: 6
       env: WEBPACK_VERSION=canary JOB_PART=test
 before_install:
   - 'if [[ `npm -v` != 5* ]]; then npm i -g npm@^5.0.0; fi'
