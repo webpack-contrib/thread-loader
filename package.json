@@ -55,7 +55,7 @@
     "pre-commit": "^1.2.2",
     "sass-loader": "^7.1.0",
     "standard-version": "^4.4.0",
-    "thread-loader": "./",
+    "thread-loader": ".",
     "webpack": "^4.27.1",
     "webpack-cli": "^3.1.2",
     "webpack-defaults": "^1.6.0"
