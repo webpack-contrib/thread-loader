@@ -17,7 +17,7 @@
     "prebuild": "npm run clean",
     "prepare": "npm run build",
     "release": "standard-version",
-    "security": "nsp check",
+    "security": "npm audit",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --collectCoverageFrom='src/**/*.js' --coverage",
@@ -33,7 +33,6 @@
     "loader-utils": "^1.1.0"
   },
   "devDependencies": {
-    "@webpack-contrib/defaults": "^3.0.1",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-jest": "^23.6.0",
@@ -49,9 +48,9 @@
     "lint-staged": "^8.1.0",
     "lodash": "^4.17.11",
     "nodemon": "^1.18.8",
-    "nsp": "^2.6.3",
     "pre-commit": "^1.2.2",
-    "standard-version": "^4.4.0"
+    "standard-version": "^4.4.0",
+    "webpack-defaults": "^1.6.0"
   },
   "engines": {
     "node": ">= 4.8 < 5.0.0 || >= 5.10"
