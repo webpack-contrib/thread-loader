@@ -38,10 +38,12 @@ const runPitch = options => pitch.call(
   ),
 );
 
-it('validation', () => {
+it('runs pitch successfully when workPool not throw an error', () => {
   runGetPoolMock(null);
   expect(() => runPitch({})).not.toThrow();
+});
 
+it('runs pitch unsuccessfully when workPool throw an error', () => {
   runGetPoolMock(new Error('Unexpected Error'));
   expect(() => runPitch({})).toThrowErrorMatchingSnapshot();
 });
