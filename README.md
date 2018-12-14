@@ -61,7 +61,8 @@ use: [
     loader: "thread-loader",
     // loaders with equal options will share worker pools
     options: {
-      // the number of spawned workers, defaults to number of cpus
+      // the number of spawned workers, defaults to (number of cpus - 1) or
+      // fallback to 1 when require('os').cpus() is undefined
       workers: 2,
 
       // number of jobs a worker processes in parallel
