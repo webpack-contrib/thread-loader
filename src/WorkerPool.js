@@ -26,8 +26,8 @@ class PoolWorker {
     // when the kernel hits the limit of open files.
     // More info can be found on: https://github.com/webpack-contrib/thread-loader/issues/2
     if (!this.worker.stdio) {
-      throw new Error(`Failed to create the worker pool with workerId: ${workerId} and \
-      configuration: ${options}. Please verify if you hit the OS open files limit.`);
+      throw new Error(`Failed to create the worker pool with workerId: ${workerId} and ${''
+      }configuration: ${JSON.stringify(options)}. Please verify if you hit the OS open files limit.`);
     }
 
     const [, , , readPipe, writePipe] = this.worker.stdio;
