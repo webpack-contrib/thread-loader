@@ -4,14 +4,10 @@ import WorkerPool from './WorkerPool';
 const workerPools = Object.create(null);
 
 function calculateNumberOfWorkers() {
-  const cpus = os.cpus();
-
-  if (!cpus) {
-    // There are situations when this call will return undefined so
-    // we are fallback here to 1.
-    // More info on: https://github.com/nodejs/node/issues/19022
-    return 1;
-  }
+  // There are situations when this call will return undefined so
+  // we are fallback here to 1.
+  // More info on: https://github.com/nodejs/node/issues/19022
+  const cpus = os.cpus() || { length: 1 };
 
   return Math.max(1, cpus.length - 1);
 }
