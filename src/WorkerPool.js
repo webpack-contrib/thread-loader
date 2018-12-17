@@ -21,6 +21,15 @@ class PoolWorker {
     this.worker = childProcess.spawn(process.execPath, [].concat(options.nodeArgs || []).concat(workerPath, options.parallelJobs), {
       stdio: ['ignore', 1, 2, 'pipe', 'pipe'],
     });
+
+    // This prevents a problem where the worker stdio can be undefined
+    // when the kernel hits the limit of open files.
+    // More info can be found on: https://github.com/webpack-contrib/thread-loader/issues/2
+    if (!this.worker.stdio) {
+      throw new Error(`Failed to create the worker pool with workerId: ${workerId} and ${''
+      }configuration: ${JSON.stringify(options)}. Please verify if you hit the OS open files limit.`);
+    }
+
     const [, , , readPipe, writePipe] = this.worker.stdio;
     this.readPipe = readPipe;
     this.writePipe = writePipe;
