@@ -11,9 +11,6 @@ environment:
     - nodejs_version: '6'
       webpack_version: latest
       job_part: test
-    - nodejs_version: '4.8'
-      webpack_version: latest
-      job_part: test
 build: 'off'
 matrix:
   fast_finish: true
