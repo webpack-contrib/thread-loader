@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.0"></a>
+## [2.0.0](https://github.com/webpack-contrib/thread-loader/compare/v1.2.0...v2.0.0) (2018-12-18)
+
+
+### Bug Fixes
+
+* calculate number of workers correctly ([#49](https://github.com/webpack-contrib/thread-loader/issues/49)) ([fcbd813](https://github.com/webpack-contrib/thread-loader/commit/fcbd813))
+* check on `undefined` for `worker.stdio` ([#45](https://github.com/webpack-contrib/thread-loader/issues/45)) ([c891a9c](https://github.com/webpack-contrib/thread-loader/commit/c891a9c))
+* listen `end` events ([#42](https://github.com/webpack-contrib/thread-loader/issues/42)) ([0f87683](https://github.com/webpack-contrib/thread-loader/commit/0f87683))
+
+
+### BREAKING CHANGE
+
+* drop support for node < 6.9
+
+
+
 <a name="1.2.0"></a>
 # [1.2.0](https://github.com/webpack-contrib/thread-loader/compare/v1.1.5...v1.2.0) (2018-07-27)
 
