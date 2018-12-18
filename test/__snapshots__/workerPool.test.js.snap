@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`workerPool should throw an error when worker.stdio is undefined 1`] = `"Failed to create the worker pool with workerId: 1 and configuration: {}. Please verify if you hit the OS open files limit."`;

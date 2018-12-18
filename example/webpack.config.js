@@ -1,6 +1,6 @@
 const path = require('path');
-const ExtractTextPlugin = require('extract-text-webpack-plugin'); // eslint-disable-line import/no-extraneous-dependencies
-const threadLoader = require('thread-loader'); // eslint-disable-line import/no-extraneous-dependencies
+const MiniCssExtractPlugin = require('mini-css-extract-plugin'); // eslint-disable-line import/no-extraneous-dependencies
+const threadLoader = require('../src'); // eslint-disable-line import/no-extraneous-dependencies
 
 module.exports = (env) => {
   const workerPool = {
@@ -17,6 +17,7 @@ module.exports = (env) => {
     threadLoader.warmup(workerPoolSass, ['sass-loader', 'css-loader']);
   }
   return {
+    mode: 'none',
     context: __dirname,
     entry: ['react', 'lodash-es', './index.js'],
     output: {
@@ -29,7 +30,7 @@ module.exports = (env) => {
           test: /\.js$/,
           use: [
             env.threads !== 0 && {
-              loader: 'thread-loader',
+              loader: path.resolve(__dirname, '../src/index.js'),
               options: workerPool,
             },
             'babel-loader',
@@ -37,21 +38,22 @@ module.exports = (env) => {
         },
         {
           test: /\.scss$/,
-          use: ExtractTextPlugin.extract({
-            use: [
-              env.threads !== 0 && {
-                loader: 'thread-loader',
-                options: workerPoolSass,
-              },
-              'css-loader',
-              'sass-loader',
-            ].filter(Boolean),
-          }),
+          use: [
+            MiniCssExtractPlugin.loader,
+            env.threads !== 0 && {
+              loader: path.resolve(__dirname, '../src/index.js'),
+              options: workerPoolSass,
+            },
+            'css-loader',
+            'sass-loader',
+          ].filter(Boolean),
         },
       ],
     },
     plugins: [
-      new ExtractTextPlugin('style.css'),
+      new MiniCssExtractPlugin({
+        filename: 'style.css',
+      }),
     ],
     stats: {
       children: false,
