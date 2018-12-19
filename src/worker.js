@@ -9,13 +9,52 @@ import readBuffer from './readBuffer';
 const writePipe = fs.createWriteStream(null, { fd: 3 });
 const readPipe = fs.createReadStream(null, { fd: 4 });
 
-writePipe.on('error', console.error.bind(console));
-readPipe.on('error', console.error.bind(console));
+writePipe.on('finish', onTerminate);
+readPipe.on('end', onTerminate);
+writePipe.on('close', onTerminate);
+readPipe.on('close', onTerminate);
+
+readPipe.on('error', onError);
+writePipe.on('error', onError);
 
 const PARALLEL_JOBS = +process.argv[2];
 
+let terminated = false;
 let nextQuestionId = 0;
 const callbackMap = Object.create(null);
+
+function onError(error) {
+  console.error(error);
+}
+
+function onTerminate() {
+  terminate();
+}
+
+function writePipeWrite(...args) {
+  if (!terminated) {
+    writePipe.write(args);
+  }
+}
+
+function writePipeCork() {
+  if (!terminated) {
+    writePipe.cork();
+  }
+}
+
+function writePipeUncork() {
+  if (!terminated) {
+    writePipe.uncork();
+  }
+}
+
+function terminate() {
+  terminated = true;
+
+  writePipe.removeAllListeners();
+  readPipe.removeAllListeners();
+}
 
 function toErrorObj(err) {
   return {
@@ -35,13 +74,17 @@ function toNativeError(obj) {
 }
 
 function writeJson(data) {
-  writePipe.cork();
-  process.nextTick(() => writePipe.uncork());
+  writePipeCork();
+  process.nextTick(() => {
+    writePipeUncork();
+  });
+
   const lengthBuffer = new Buffer(4);
   const messageBuffer = new Buffer(JSON.stringify(data), 'utf-8');
   lengthBuffer.writeInt32BE(messageBuffer.length, 0);
-  writePipe.write(lengthBuffer);
-  writePipe.write(messageBuffer);
+
+  writePipeWrite(lengthBuffer);
+  writePipeWrite(messageBuffer);
 }
 
 const queue = asyncQueue(({ id, data }, taskCallback) => {
@@ -135,7 +178,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
         data: buffersToSend.map(buffer => buffer.length),
       });
       buffersToSend.forEach((buffer) => {
-        writePipe.write(buffer);
+        writePipeWrite(buffer);
       });
       setImmediate(taskCallback);
     });
@@ -148,6 +191,13 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
     taskCallback();
   }
 }, PARALLEL_JOBS);
+
+function dispose() {
+  terminate();
+
+  queue.kill();
+  process.exit(0);
+}
 
 function onMessage(message) {
   try {
@@ -191,19 +241,26 @@ function readNextMessage() {
       console.error(`Failed to communicate with main process (read length) ${lengthReadError}`);
       return;
     }
-    const length = lengthBuffer.readInt32BE(0);
+
+    const length = lengthBuffer.length && lengthBuffer.readInt32BE(0);
+
     if (length === 0) {
-      // worker should exit
-      process.exit(0);
+      // worker should dispose and exit
+      dispose();
       return;
     }
     readBuffer(readPipe, length, (messageError, messageBuffer) => {
+      if (terminated) {
+        return;
+      }
+
       if (messageError) {
         console.error(`Failed to communicate with main process (read message) ${messageError}`);
         return;
       }
       const messageString = messageBuffer.toString('utf-8');
       const message = JSON.parse(messageString);
+
       onMessage(message);
       setImmediate(() => readNextMessage());
     });

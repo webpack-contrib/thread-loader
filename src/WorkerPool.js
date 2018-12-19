@@ -12,6 +12,7 @@ let workerId = 0;
 
 class PoolWorker {
   constructor(options, onJobDone) {
+    this.disposed = false;
     this.nextJobId = 0;
     this.jobs = Object.create(null);
     this.activeJobs = 0;
@@ -19,8 +20,11 @@ class PoolWorker {
     this.id = workerId;
     workerId += 1;
     this.worker = childProcess.spawn(process.execPath, [].concat(options.nodeArgs || []).concat(workerPath, options.parallelJobs), {
-      stdio: ['ignore', 1, 2, 'pipe', 'pipe'],
+      detached: true,
+      stdio: ['ignore', 'pipe', 'pipe', 'pipe', 'pipe'],
     });
+
+    this.worker.unref();
 
     // This prevents a problem where the worker stdio can be undefined
     // when the kernel hits the limit of open files.
@@ -33,7 +37,30 @@ class PoolWorker {
     const [, , , readPipe, writePipe] = this.worker.stdio;
     this.readPipe = readPipe;
     this.writePipe = writePipe;
+    this.listenStdOutAndErrFromWorker(this.worker.stdout, this.worker.stderr);
     this.readNextMessage();
+  }
+
+  listenStdOutAndErrFromWorker(workerStdout, workerStderr) {
+    workerStdout.on('data', this.writeToStdout);
+    workerStderr.on('data', this.writeToStderr);
+  }
+
+  ignoreStdOutAndErrFromWorker(workerStdout, workerStderr) {
+    workerStdout.removeListener('data', this.writeToStdout);
+    workerStderr.removeListener('data', this.writeToStderr);
+  }
+
+  writeToStdout(data) {
+    if (!this.disposed) {
+      process.stdout.write(data);
+    }
+  }
+
+  writeToStderr(data) {
+    if (!this.disposed) {
+      process.stderr.write(data);
+    }
   }
 
   run(data, callback) {
@@ -64,9 +91,7 @@ class PoolWorker {
   }
 
   writeEnd() {
-    const lengthBuffer = new Buffer(4);
-    lengthBuffer.writeInt32BE(0, 0);
-    this.writePipe.write(lengthBuffer);
+    this.writePipe.write(Buffer.alloc(0));
   }
 
   readNextMessage() {
@@ -78,6 +103,7 @@ class PoolWorker {
       }
       this.state = 'length read';
       const length = lengthBuffer.readInt32BE(0);
+
       this.state = 'read message';
       this.readBuffer(length, (messageError, messageBuffer) => {
         if (messageError) {
@@ -201,7 +227,11 @@ class PoolWorker {
   }
 
   dispose() {
-    this.writeEnd();
+    if (!this.disposed) {
+      this.disposed = true;
+      this.ignoreStdOutAndErrFromWorker(this.worker.stdout, this.worker.stderr);
+      this.writeEnd();
+    }
   }
 }
 
@@ -216,6 +246,32 @@ export default class WorkerPool {
     this.activeJobs = 0;
     this.timeout = null;
     this.poolQueue = asyncQueue(this.distributeJob.bind(this), options.poolParallelJobs);
+    this.terminated = false;
+
+    this.setupLifeCycle();
+  }
+
+  terminate() {
+    if (!this.terminated) {
+      this.terminated = true;
+
+      this.poolQueue.kill();
+      this.disposeWorkers();
+    }
+  }
+
+  setupLifeCycle() {
+    process.on('SIGTERM', () => {
+      this.terminate();
+    });
+
+    process.on('SIGINT', () => {
+      this.terminate();
+    });
+
+    process.on('exit', () => {
+      this.terminate();
+    });
   }
 
   run(data, callback) {
