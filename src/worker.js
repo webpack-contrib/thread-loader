@@ -9,10 +9,10 @@ import readBuffer from './readBuffer';
 const writePipe = fs.createWriteStream(null, { fd: 3 });
 const readPipe = fs.createReadStream(null, { fd: 4 });
 
-writePipe.on('finish', onTerminate);
-readPipe.on('end', onTerminate);
-writePipe.on('close', onTerminate);
-readPipe.on('close', onTerminate);
+writePipe.on('finish', onTerminateWrite);
+readPipe.on('end', onTerminateRead);
+writePipe.on('close', onTerminateWrite);
+readPipe.on('close', onTerminateRead);
 
 readPipe.on('error', onError);
 writePipe.on('error', onError);
@@ -27,13 +27,17 @@ function onError(error) {
   console.error(error);
 }
 
-function onTerminate() {
-  terminate();
+function onTerminateRead() {
+  terminateRead();
+}
+
+function onTerminateWrite() {
+  terminateWrite();
 }
 
 function writePipeWrite(...args) {
   if (!terminated) {
-    writePipe.write(args);
+    writePipe.write(...args);
   }
 }
 
@@ -49,11 +53,20 @@ function writePipeUncork() {
   }
 }
 
-function terminate() {
+function terminateRead() {
   terminated = true;
-
-  writePipe.removeAllListeners();
+  this.writePipe.write(Buffer.alloc(0));
   readPipe.removeAllListeners();
+}
+
+function terminateWrite() {
+  terminated = true;
+  writePipe.removeAllListeners();
+}
+
+function terminate() {
+  terminateRead();
+  terminateWrite();
 }
 
 function toErrorObj(err) {

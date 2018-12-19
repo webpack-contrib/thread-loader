@@ -4,16 +4,11 @@ export default function readBuffer(pipe, length, callback) {
     return;
   }
 
-  let terminated = false;
   let remainingLength = length;
   const buffers = [];
 
   const readChunk = () => {
     const onChunk = (arg) => {
-      if (terminated) {
-        return;
-      }
-
       let chunk = arg;
       let overflow;
       if (chunk.length > remainingLength) {
@@ -36,20 +31,6 @@ export default function readBuffer(pipe, length, callback) {
       }
     };
 
-    const onTerminate = () => {
-      if (terminated) {
-        return;
-      }
-
-      terminated = true;
-      pipe.removeListener('close', onTerminate);
-      pipe.removeListener('end', onTerminate);
-
-      callback(null, Buffer.alloc(0));
-    };
-
-    pipe.on('close', onTerminate);
-    pipe.on('end', onTerminate);
     pipe.on('data', onChunk);
     pipe.resume();
   };
