@@ -25,7 +25,7 @@ test('data is read', (done) => {
 });
 
 test('no data is read when early quit but no error is thrown', (done) => {
-  expect.assertions(2);
+  expect.assertions(1);
   let eventCount = 0;
   function read() {
     eventCount += 1;
@@ -38,10 +38,10 @@ test('no data is read when early quit but no error is thrown', (done) => {
     objectMode: true,
     read,
   });
-  function cb(err, data) {
-    expect(err).toBe(null);
-    expect(data.length).toBe(0);
-    done();
-  }
+
+  const cb = jest.fn();
   readBuffer.default(mockEventStream, 8, cb);
+
+  expect(cb).not.toHaveBeenCalled();
+  done();
 });
