@@ -92,8 +92,8 @@ function writeJson(data) {
     writePipeUncork();
   });
 
-  const lengthBuffer = new Buffer(4);
-  const messageBuffer = new Buffer(JSON.stringify(data), 'utf-8');
+  const lengthBuffer = Buffer.alloc(4);
+  const messageBuffer = Buffer.from(JSON.stringify(data), 'utf-8');
   lengthBuffer.writeInt32BE(messageBuffer.length, 0);
 
   writePipeWrite(lengthBuffer);
