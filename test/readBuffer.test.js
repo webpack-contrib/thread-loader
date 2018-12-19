@@ -24,8 +24,8 @@ test('data is read', (done) => {
   readBuffer.default(mockEventStream, 8, cb);
 });
 
-test('EOF returned for early quit', (done) => {
-  expect.assertions(2);
+test('no data is read when early quit but no error is thrown', (done) => {
+  expect.assertions(1);
   let eventCount = 0;
   function read() {
     eventCount += 1;
@@ -38,10 +38,10 @@ test('EOF returned for early quit', (done) => {
     objectMode: true,
     read,
   });
-  function cb(err) {
-    expect(err.name).toBe('EarlyEOFError');
-    expect(err.message).toBe('Stream ended 3 bytes prematurely');
-    done();
-  }
+
+  const cb = jest.fn();
   readBuffer.default(mockEventStream, 8, cb);
+
+  expect(cb).not.toHaveBeenCalled();
+  done();
 });
