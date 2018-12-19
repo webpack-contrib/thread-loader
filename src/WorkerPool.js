@@ -42,13 +42,23 @@ class PoolWorker {
   }
 
   listenStdOutAndErrFromWorker(workerStdout, workerStderr) {
-    workerStdout.on('data', this.writeToStdout);
-    workerStderr.on('data', this.writeToStderr);
+    if (workerStdout) {
+      workerStdout.on('data', this.writeToStdout);
+    }
+
+    if (workerStderr) {
+      workerStderr.on('data', this.writeToStderr);
+    }
   }
 
   ignoreStdOutAndErrFromWorker(workerStdout, workerStderr) {
-    workerStdout.removeListener('data', this.writeToStdout);
-    workerStderr.removeListener('data', this.writeToStderr);
+    if (workerStdout) {
+      workerStdout.removeListener('data', this.writeToStdout);
+    }
+
+    if (workerStderr) {
+      workerStderr.removeListener('data', this.writeToStderr);
+    }
   }
 
   writeToStdout(data) {

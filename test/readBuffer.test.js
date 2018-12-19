@@ -24,7 +24,7 @@ test('data is read', (done) => {
   readBuffer.default(mockEventStream, 8, cb);
 });
 
-test('EOF returned for early quit', (done) => {
+test('no data is read when early quit but no error is thrown', (done) => {
   expect.assertions(2);
   let eventCount = 0;
   function read() {
@@ -38,9 +38,9 @@ test('EOF returned for early quit', (done) => {
     objectMode: true,
     read,
   });
-  function cb(err) {
-    expect(err.name).toBe('EarlyEOFError');
-    expect(err.message).toBe('Stream ended 3 bytes prematurely');
+  function cb(err, data) {
+    expect(err).toBe(null);
+    expect(data.length).toBe(0);
     done();
   }
   readBuffer.default(mockEventStream, 8, cb);
