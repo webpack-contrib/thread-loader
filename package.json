@@ -1,6 +1,6 @@
 {
   "name": "thread-loader",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Runs the following loaders in a worker pool",
   "author": "Tobias Koppers @sokra",
   "license": "MIT",
