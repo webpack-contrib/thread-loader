@@ -55,7 +55,6 @@ function writePipeUncork() {
 
 function terminateRead() {
   terminated = true;
-  this.writePipe.write(Buffer.alloc(0));
   readPipe.removeAllListeners();
 }
 
@@ -167,7 +166,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
           };
         }
         if (typeof item === 'string') {
-          const stringBuffer = new Buffer(item, 'utf-8');
+          const stringBuffer = Buffer.from(item, 'utf-8');
           buffersToSend.push(stringBuffer);
           return {
             buffer: true,
