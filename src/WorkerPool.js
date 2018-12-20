@@ -93,15 +93,17 @@ class PoolWorker {
   }
 
   writeJson(data) {
-    const lengthBuffer = new Buffer(4);
-    const messageBuffer = new Buffer(JSON.stringify(data), 'utf-8');
+    const lengthBuffer = Buffer.alloc(4);
+    const messageBuffer = Buffer.from(JSON.stringify(data), 'utf-8');
     lengthBuffer.writeInt32BE(messageBuffer.length, 0);
     this.writePipe.write(lengthBuffer);
     this.writePipe.write(messageBuffer);
   }
 
   writeEnd() {
-    this.writePipe.write(Buffer.alloc(0));
+    const lengthBuffer = Buffer.alloc(4);
+    lengthBuffer.writeInt32BE(0, 0);
+    this.writePipe.write(lengthBuffer);
   }
 
   readNextMessage() {
@@ -261,26 +263,26 @@ export default class WorkerPool {
     this.setupLifeCycle();
   }
 
-  terminate() {
+  terminate(force) {
     if (!this.terminated) {
       this.terminated = true;
 
       this.poolQueue.kill();
-      this.disposeWorkers();
+      this.disposeWorkers(force);
     }
   }
 
   setupLifeCycle() {
     process.on('SIGTERM', () => {
-      this.terminate();
+      this.terminate(true);
     });
 
     process.on('SIGINT', () => {
-      this.terminate();
+      this.terminate(true);
     });
 
     process.on('exit', () => {
-      this.terminate();
+      this.terminate(true);
     });
   }
 
@@ -332,8 +334,8 @@ export default class WorkerPool {
     }
   }
 
-  disposeWorkers() {
-    if (this.activeJobs === 0) {
+  disposeWorkers(force) {
+    if (this.activeJobs === 0 || force) {
       for (const worker of this.workers) {
         worker.dispose();
       }
