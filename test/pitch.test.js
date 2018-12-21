@@ -11,6 +11,7 @@ jest.mock('../src/workerPools', () => {
 const runGetPoolMock = (error) => {
   getPool.mockImplementationOnce(() => {
     return {
+      isAbleToRun: () => true,
       run: jest.fn((opts, cb) => {
         cb(error, {
           fileDependencies: [],

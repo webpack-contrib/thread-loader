@@ -72,6 +72,11 @@ use: [
       // additional node.js arguments
       workerNodeArgs: ['--max-old-space-size=1024'],
 
+      // Allow to respawn a dead worker pool
+      // respawning slows down the entire compilation
+      // and should be set to false for development
+      poolRespawn: false,
+
       // timeout for killing the worker processes when idle
       // defaults to 500 (ms)
       // can be set to Infinity for watching builds to keep workers alive

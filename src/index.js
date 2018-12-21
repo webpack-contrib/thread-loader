@@ -4,6 +4,9 @@ import { getPool } from './workerPools';
 function pitch() {
   const options = loaderUtils.getOptions(this) || {};
   const workerPool = getPool(options);
+  if (!workerPool.isAbleToRun()) {
+    return;
+  }
   const callback = this.async();
   workerPool.run({
     loaders: this.loaders.slice(this.loaderIndex + 1).map((l) => {

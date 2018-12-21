@@ -263,6 +263,10 @@ export default class WorkerPool {
     this.setupLifeCycle();
   }
 
+  isAbleToRun() {
+    return !this.terminated;
+  }
+
   terminate(force) {
     if (!this.terminated) {
       this.terminated = true;
@@ -340,6 +344,9 @@ export default class WorkerPool {
         worker.dispose();
       }
       this.workers.clear();
+    }
+    if (!this.options.poolRespawn) {
+      this.terminate();
     }
   }
 }
