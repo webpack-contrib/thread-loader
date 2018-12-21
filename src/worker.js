@@ -3,7 +3,7 @@
 import fs from 'fs';
 import NativeModule from 'module';
 import loaderRunner from 'loader-runner';
-import asyncQueue from 'async/queue';
+import asyncQueue from 'neo-async/queue';
 import readBuffer from './readBuffer';
 
 const writePipe = fs.createWriteStream(null, { fd: 3 });

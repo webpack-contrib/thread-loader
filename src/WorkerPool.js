@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 
 import childProcess from 'child_process';
-import asyncQueue from 'async/queue';
-import asyncMapSeries from 'async/mapSeries';
+import asyncQueue from 'neo-async/queue';
+import asyncMapSeries from 'neo-async/mapSeries';
 import readBuffer from './readBuffer';
 import WorkerError from './WorkerError';
 
