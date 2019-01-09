@@ -342,15 +342,17 @@ export default class WorkerPool {
     }
   }
 
-  disposeWorkers(force) {
-    if (this.activeJobs === 0 || force) {
+  disposeWorkers(fromTerminate) {
+    if (!this.options.poolRespawn && !fromTerminate) {
+      this.terminate({ exit: true });
+      return;
+    }
+
+    if (this.activeJobs === 0 || fromTerminate) {
       for (const worker of this.workers) {
         worker.dispose();
       }
       this.workers.clear();
-    }
-    if (!this.options.poolRespawn) {
-      this.terminate();
     }
   }
 }
