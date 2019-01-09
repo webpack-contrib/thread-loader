@@ -278,6 +278,14 @@ export default class WorkerPool {
   }
 
   setupLifeCycle() {
+    process.on('SIGTERM', () => {
+      process.exit(1);
+    });
+
+    process.on('SIGINT', () => {
+      process.exit(1);
+    });
+
     process.on('exit', () => {
       this.terminate();
     });
@@ -333,7 +341,7 @@ export default class WorkerPool {
 
   disposeWorkers(fromTerminate) {
     if (!this.options.poolRespawn && !fromTerminate) {
-      this.terminate({ exit: true });
+      this.terminate();
       return;
     }
 
