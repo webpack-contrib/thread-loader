@@ -258,18 +258,18 @@ export default class WorkerPool {
     this.activeJobs = 0;
     this.timeout = null;
     this.poolQueue = asyncQueue(this.distributeJob.bind(this), options.poolParallelJobs);
-    this.terminated = false;
+    this.exited = false;
 
     this.setupLifeCycle();
   }
 
   isAbleToRun() {
-    return !this.terminated;
+    return !this.exited;
   }
 
   terminate({ exit, clean }) {
     if (exit) {
-      this.terminated = true;
+      this.exited = true;
       process.exit(0);
       return;
     }
