@@ -267,26 +267,30 @@ export default class WorkerPool {
     return !this.terminated;
   }
 
-  terminate(force) {
-    if (!this.terminated) {
+  terminate({ exit, clean }) {
+    if (exit) {
       this.terminated = true;
+      process.exit(0);
+      return;
+    }
 
+    if (clean) {
       this.poolQueue.kill();
-      this.disposeWorkers(force);
+      this.disposeWorkers(true);
     }
   }
 
   setupLifeCycle() {
     process.on('SIGTERM', () => {
-      this.terminate(true);
+      this.terminate({ exit: true });
     });
 
     process.on('SIGINT', () => {
-      this.terminate(true);
+      this.terminate({ exit: true });
     });
 
     process.on('exit', () => {
-      this.terminate(true);
+      this.terminate({ clean: true });
     });
   }
 
