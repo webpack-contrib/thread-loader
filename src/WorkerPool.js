@@ -258,39 +258,28 @@ export default class WorkerPool {
     this.activeJobs = 0;
     this.timeout = null;
     this.poolQueue = asyncQueue(this.distributeJob.bind(this), options.poolParallelJobs);
-    this.exited = false;
+    this.terminated = false;
 
     this.setupLifeCycle();
   }
 
   isAbleToRun() {
-    return !this.exited;
+    return !this.terminated;
   }
 
-  terminate({ exit, clean }) {
-    if (exit) {
-      this.exited = true;
-      process.exit(0);
+  terminate() {
+    if (this.terminated) {
       return;
     }
 
-    if (clean) {
-      this.poolQueue.kill();
-      this.disposeWorkers(true);
-    }
+    this.terminated = true;
+    this.poolQueue.kill();
+    this.disposeWorkers(true);
   }
 
   setupLifeCycle() {
-    process.on('SIGTERM', () => {
-      this.terminate({ exit: true });
-    });
-
-    process.on('SIGINT', () => {
-      this.terminate({ exit: true });
-    });
-
     process.on('exit', () => {
-      this.terminate({ clean: true });
+      this.terminate();
     });
   }
 

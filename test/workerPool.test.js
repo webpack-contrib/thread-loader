@@ -36,7 +36,7 @@ describe('workerPool', () => {
     expect(workerPool.isAbleToRun()).toBe(true);
   });
 
-  it('should not be able to run if the worker pool was not terminated', () => {
+  it('should not be able to run if the worker pool was terminated', () => {
     const workerPool = new WorkerPool({});
     workerPool.terminate();
     expect(workerPool.isAbleToRun()).toBe(false);
