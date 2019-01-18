@@ -267,26 +267,19 @@ export default class WorkerPool {
     return !this.terminated;
   }
 
-  terminate(force) {
-    if (!this.terminated) {
-      this.terminated = true;
-
-      this.poolQueue.kill();
-      this.disposeWorkers(force);
+  terminate() {
+    if (this.terminated) {
+      return;
     }
+
+    this.terminated = true;
+    this.poolQueue.kill();
+    this.disposeWorkers(true);
   }
 
   setupLifeCycle() {
-    process.on('SIGTERM', () => {
-      this.terminate(true);
-    });
-
-    process.on('SIGINT', () => {
-      this.terminate(true);
-    });
-
     process.on('exit', () => {
-      this.terminate(true);
+      this.terminate();
     });
   }
 
@@ -338,15 +331,17 @@ export default class WorkerPool {
     }
   }
 
-  disposeWorkers(force) {
-    if (this.activeJobs === 0 || force) {
+  disposeWorkers(fromTerminate) {
+    if (!this.options.poolRespawn && !fromTerminate) {
+      this.terminate();
+      return;
+    }
+
+    if (this.activeJobs === 0 || fromTerminate) {
       for (const worker of this.workers) {
         worker.dispose();
       }
       this.workers.clear();
-    }
-    if (!this.options.poolRespawn) {
-      this.terminate();
     }
   }
 }
