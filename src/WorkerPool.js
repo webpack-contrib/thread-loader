@@ -18,8 +18,12 @@ class PoolWorker {
     this.activeJobs = 0;
     this.onJobDone = onJobDone;
     this.id = workerId;
+
     workerId += 1;
-    this.worker = childProcess.spawn(process.execPath, [].concat(options.nodeArgs || []).concat(workerPath, options.parallelJobs), {
+    // Empty or invalid node args would break the child process
+    const sanitizedNodeArgs = (options.nodeArgs || []).filter(opt => !!opt);
+
+    this.worker = childProcess.spawn(process.execPath, [].concat(sanitizedNodeArgs).concat(workerPath, options.parallelJobs), {
       detached: true,
       stdio: ['ignore', 'pipe', 'pipe', 'pipe', 'pipe'],
     });
@@ -252,8 +256,7 @@ export default class WorkerPool {
     this.options = options || {};
     this.numberOfWorkers = options.numberOfWorkers;
     this.poolTimeout = options.poolTimeout;
-    // Empty or invalid node args would break the child process
-    this.workerNodeArgs = options.workerNodeArgs.filter(opt => !!opt);
+    this.workerNodeArgs = options.workerNodeArgs;
     this.workerParallelJobs = options.workerParallelJobs;
     this.workers = new Set();
     this.activeJobs = 0;
