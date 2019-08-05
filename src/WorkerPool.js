@@ -252,7 +252,8 @@ export default class WorkerPool {
     this.options = options || {};
     this.numberOfWorkers = options.numberOfWorkers;
     this.poolTimeout = options.poolTimeout;
-    this.workerNodeArgs = options.workerNodeArgs;
+    // Empty or invalid node args would break the child process
+    this.workerNodeArgs = options.workerNodeArgs.filter(opt => !!opt);
     this.workerParallelJobs = options.workerParallelJobs;
     this.workers = new Set();
     this.activeJobs = 0;
