@@ -17,7 +17,7 @@ readPipe.on('close', onTerminateRead);
 readPipe.on('error', onError);
 writePipe.on('error', onError);
 
-const PARALLEL_JOBS = +process.argv[2];
+const PARALLEL_JOBS = +process.argv[2] || 20;
 
 let terminated = false;
 let nextQuestionId = 0;
