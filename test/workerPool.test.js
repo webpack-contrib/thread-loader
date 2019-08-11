@@ -41,4 +41,28 @@ describe('workerPool', () => {
     workerPool.terminate();
     expect(workerPool.isAbleToRun()).toBe(false);
   });
+
+  it('should sanitize nodeArgs when spawn a child process', () => {
+    childProcess.spawn.mockClear();
+    childProcess.spawn.mockImplementationOnce(() => {
+      return {
+        stdio: new Array(5).fill(new stream.PassThrough()),
+        unref: jest.fn(),
+      };
+    });
+
+    const workerPool = new WorkerPool({
+      workerNodeArgs: [
+        '--max-old-space-size=1024',
+        '',
+        null,
+      ],
+      workerParallelJobs: 20,
+    });
+
+    expect(() => workerPool.createWorker()).not.toThrow();
+
+    const nonSanitizedNodeArgs = childProcess.spawn.mock.calls[0][1].filter(opt => !opt);
+    expect(nonSanitizedNodeArgs.length).toEqual(0);
+  });
 });
