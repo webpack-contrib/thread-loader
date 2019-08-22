@@ -17,7 +17,7 @@ const runGetPoolMock = (error) => {
         cb(error, {
           fileDependencies: [],
           contextDependencies: [],
-          result: {},
+          result: [],
         });
       }),
     };
