@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.1.3"></a>
+## [2.1.3](https://github.com/webpack-contrib/thread-loader/compare/v2.1.2...v2.1.3) (2019-08-08)
+
+
+### Bug Fixes
+
+* correct default for workerParallelJobs option ([#74](https://github.com/webpack-contrib/thread-loader/issues/74)) ([79758d0](https://github.com/webpack-contrib/thread-loader/commit/79758d0))
+* do not allow empty or invalid node args when spin up child process ([#73](https://github.com/webpack-contrib/thread-loader/issues/73)) ([b02d503](https://github.com/webpack-contrib/thread-loader/commit/b02d503))
+
+
+
 <a name="2.1.2"></a>
 ## [2.1.2](https://github.com/webpack-contrib/thread-loader/compare/v2.1.1...v2.1.2) (2019-01-25)
 
