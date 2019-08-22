@@ -1,4 +1,5 @@
 const stream = require('stream');
+
 const readBuffer = require('../dist/readBuffer');
 
 test('data is read', (done) => {

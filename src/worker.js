@@ -2,8 +2,10 @@
 /* eslint-disable no-console */
 import fs from 'fs';
 import NativeModule from 'module';
+
 import loaderRunner from 'loader-runner';
 import asyncQueue from 'neo-async/queue';
+
 import readBuffer from './readBuffer';
 
 const writePipe = fs.createWriteStream(null, { fd: 3 });
@@ -101,99 +103,104 @@ function writeJson(data) {
 
 const queue = asyncQueue(({ id, data }, taskCallback) => {
   try {
-    loaderRunner.runLoaders({
-      loaders: data.loaders,
-      resource: data.resource,
-      readResource: fs.readFile.bind(fs),
-      context: {
-        version: 2,
-        resolve: (context, request, callback) => {
-          callbackMap[nextQuestionId] = callback;
-          writeJson({
-            type: 'resolve',
-            id,
-            questionId: nextQuestionId,
-            context,
-            request,
-          });
-          nextQuestionId += 1;
+    loaderRunner.runLoaders(
+      {
+        loaders: data.loaders,
+        resource: data.resource,
+        readResource: fs.readFile.bind(fs),
+        context: {
+          version: 2,
+          resolve: (context, request, callback) => {
+            callbackMap[nextQuestionId] = callback;
+            writeJson({
+              type: 'resolve',
+              id,
+              questionId: nextQuestionId,
+              context,
+              request,
+            });
+            nextQuestionId += 1;
+          },
+          emitWarning: (warning) => {
+            writeJson({
+              type: 'emitWarning',
+              id,
+              data: toErrorObj(warning),
+            });
+          },
+          emitError: (error) => {
+            writeJson({
+              type: 'emitError',
+              id,
+              data: toErrorObj(error),
+            });
+          },
+          exec: (code, filename) => {
+            const module = new NativeModule(filename, this);
+            module.paths = NativeModule._nodeModulePaths(this.context); // eslint-disable-line no-underscore-dangle
+            module.filename = filename;
+            module._compile(code, filename); // eslint-disable-line no-underscore-dangle
+            return module.exports;
+          },
+          options: {
+            context: data.optionsContext,
+          },
+          webpack: true,
+          'thread-loader': true,
+          sourceMap: data.sourceMap,
+          target: data.target,
+          minimize: data.minimize,
+          resourceQuery: data.resourceQuery,
         },
-        emitWarning: (warning) => {
-          writeJson({
-            type: 'emitWarning',
-            id,
-            data: toErrorObj(warning),
-          });
-        },
-        emitError: (error) => {
-          writeJson({
-            type: 'emitError',
-            id,
-            data: toErrorObj(error),
-          });
-        },
-        exec: (code, filename) => {
-          const module = new NativeModule(filename, this);
-          module.paths = NativeModule._nodeModulePaths(this.context); // eslint-disable-line no-underscore-dangle
-          module.filename = filename;
-          module._compile(code, filename); // eslint-disable-line no-underscore-dangle
-          return module.exports;
-        },
-        options: {
-          context: data.optionsContext,
-        },
-        webpack: true,
-        'thread-loader': true,
-        sourceMap: data.sourceMap,
-        target: data.target,
-        minimize: data.minimize,
-        resourceQuery: data.resourceQuery,
       },
-    }, (err, lrResult) => {
-      const {
-        result,
-        cacheable,
-        fileDependencies,
-        contextDependencies,
-      } = lrResult;
-      const buffersToSend = [];
-      const convertedResult = Array.isArray(result) && result.map((item) => {
-        const isBuffer = Buffer.isBuffer(item);
-        if (isBuffer) {
-          buffersToSend.push(item);
-          return {
-            buffer: true,
-          };
-        }
-        if (typeof item === 'string') {
-          const stringBuffer = Buffer.from(item, 'utf-8');
-          buffersToSend.push(stringBuffer);
-          return {
-            buffer: true,
-            string: true,
-          };
-        }
-        return {
-          data: item,
-        };
-      });
-      writeJson({
-        type: 'job',
-        id,
-        error: err && toErrorObj(err),
-        result: {
-          result: convertedResult,
+      (err, lrResult) => {
+        const {
+          result,
           cacheable,
           fileDependencies,
           contextDependencies,
-        },
-        data: buffersToSend.map(buffer => buffer.length),
-      });
-      buffersToSend.forEach((buffer) => {
-        writePipeWrite(buffer);
-      });
-      setImmediate(taskCallback);
-    });
+        } = lrResult;
+        const buffersToSend = [];
+        const convertedResult =
+          Array.isArray(result) &&
+          result.map((item) => {
+            const isBuffer = Buffer.isBuffer(item);
+            if (isBuffer) {
+              buffersToSend.push(item);
+              return {
+                buffer: true,
+              };
+            }
+            if (typeof item === 'string') {
+              const stringBuffer = Buffer.from(item, 'utf-8');
+              buffersToSend.push(stringBuffer);
+              return {
+                buffer: true,
+                string: true,
+              };
+            }
+            return {
+              data: item,
+            };
+          });
+        writeJson({
+          type: 'job',
+          id,
+          error: err && toErrorObj(err),
+          result: {
+            result: convertedResult,
+            cacheable,
+            fileDependencies,
+            contextDependencies,
+          },
+          data: buffersToSend.map((buffer) => buffer.length),
+        });
+        buffersToSend.forEach((buffer) => {
+          writePipeWrite(buffer);
+        });
+        setImmediate(taskCallback);
+      }
+    );
   } catch (e) {
     writeJson({
       type: 'job',
@@ -234,7 +241,7 @@ function onMessage(message) {
       case 'warmup': {
         const { requires } = message;
         // load modules into process
-        requires.forEach(r => require(r)); // eslint-disable-line import/no-dynamic-require, global-require
+        requires.forEach((r) => require(r)); // eslint-disable-line import/no-dynamic-require, global-require
         break;
       }
       default: {
@@ -250,7 +257,9 @@ function onMessage(message) {
 function readNextMessage() {
   readBuffer(readPipe, 4, (lengthReadError, lengthBuffer) => {
     if (lengthReadError) {
-      console.error(`Failed to communicate with main process (read length) ${lengthReadError}`);
+      console.error(
+        `Failed to communicate with main process (read length) ${lengthReadError}`
+      );
       return;
     }
 
@@ -267,7 +276,9 @@ function readNextMessage() {
       }
 
       if (messageError) {
-        console.error(`Failed to communicate with main process (read message) ${messageError}`);
+        console.error(
+          `Failed to communicate with main process (read message) ${messageError}`
+        );
         return;
       }
       const messageString = messageBuffer.toString('utf-8');

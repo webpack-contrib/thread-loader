@@ -1,4 +1,5 @@
 import path from 'path';
+
 import { pitch } from '../src/cjs';
 import { getPool } from '../src/workerPools';
 
@@ -23,21 +24,22 @@ const runGetPoolMock = (error) => {
   });
 };
 
-const runPitch = options => pitch.call(
-  Object.assign(
-    {},
-    {
-      query: options,
-      loaders: [],
-      rootContext: path.resolve('../'),
-      async: () => (error) => {
-        if (error) {
-          throw error;
-        }
-      },
-    },
-  ),
-);
+const runPitch = (options) =>
+  pitch.call(
+    Object.assign(
+      {},
+      {
+        query: options,
+        loaders: [],
+        rootContext: path.resolve('../'),
+        async: () => (error) => {
+          if (error) {
+            throw error;
+          }
+        },
+      }
+    )
+  );
 
 it('runs pitch successfully when workPool not throw an error', () => {
   runGetPoolMock(null);

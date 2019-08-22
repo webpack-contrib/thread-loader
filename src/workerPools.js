@@ -1,7 +1,8 @@
 import os from 'os';
+
 import WorkerPool from './WorkerPool';
 
-const workerPools = Object.create(null);
+const workerPools = {};
 
 function calculateNumberOfWorkers() {
   // There are situations when this call will return undefined so
@@ -24,8 +25,8 @@ function getPool(options) {
   };
   const tpKey = JSON.stringify(workerPoolOptions);
   workerPools[tpKey] = workerPools[tpKey] || new WorkerPool(workerPoolOptions);
-  const workerPool = workerPools[tpKey];
-  return workerPool;
+
+  return workerPools[tpKey];
 }
 
 export { getPool }; // eslint-disable-line import/prefer-default-export
