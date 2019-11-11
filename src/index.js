@@ -21,6 +21,7 @@ function pitch() {
     emitError: this.emitError,
     emitWarning: this.emitWarning,
     resolve: this.resolve,
+    getResolve: this.getResolve,
     target: this.target,
     minimize: this.minimize,
     resourceQuery: this.resourceQuery,
