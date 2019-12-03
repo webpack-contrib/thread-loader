@@ -1,5 +1,8 @@
 import loaderUtils from 'loader-utils';
 import { getPool } from './workerPools';
+import { setupTransferHandler } from './messagePortTransferHandler';
+
+setupTransferHandler();
 
 function pitch() {
   const options = loaderUtils.getOptions(this) || {};
