@@ -107,6 +107,17 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
       readResource: fs.readFile.bind(fs),
       context: {
         version: 2,
+        fs,
+        loadModule: (request, callback) => {
+          callbackMap[nextQuestionId] = (error, result) => callback(error, ...result);
+          writeJson({
+            type: 'loadModule',
+            id,
+            questionId: nextQuestionId,
+            request,
+          });
+          nextQuestionId += 1;
+        },
         resolve: (context, request, callback) => {
           callbackMap[nextQuestionId] = callback;
           writeJson({
