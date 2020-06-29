@@ -29,41 +29,41 @@
   },
   "dependencies": {
     "neo-async": "^2.6.0",
-    "loader-runner": "^2.3.1",
-    "loader-utils": "^1.1.0"
+    "loader-runner": "^3.1.0",
+    "loader-utils": "^2.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
-    "babel-jest": "^23.6.0",
-    "babel-loader": "^7.1.5",
+    "babel-jest": "^26.1.0",
+    "babel-loader": "^8.1.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
-    "cross-env": "^5.2.0",
-    "css-loader": "^1.0.1",
-    "del-cli": "^1.1.0",
-    "eslint": "^5.10.0",
+    "cross-env": "^7.0.2",
+    "css-loader": "^3.6.0",
+    "del-cli": "^3.0.1",
+    "eslint": "^7.3.1",
     "eslint-config-webpack": "^1.2.5",
     "eslint-plugin-import": "^2.14.0",
     "jest": "^23.6.0",
-    "lint-staged": "^8.1.0",
+    "lint-staged": "^10.2.11",
     "lodash": "^4.17.13",
-    "mini-css-extract-plugin": "^0.5.0",
-    "nodemon": "^1.18.8",
-    "node-sass": "^4.11.0",
+    "mini-css-extract-plugin": "^0.9.0",
+    "nodemon": "^2.0.4",
+    "node-sass": "^4.14.1",
     "pre-commit": "^1.2.2",
-    "sass-loader": "^7.1.0",
-    "standard-version": "^4.4.0",
-    "webpack": "^4.27.1",
+    "sass-loader": "^8.0.2",
+    "standard-version": "^8.0.0",
+    "webpack": "^4.43.0",
     "webpack-cli": "^3.1.2",
-    "webpack-defaults": "^1.6.0"
+    "webpack-defaults": "^4.0.0"
   },
   "engines": {
-    "node": ">= 6.9.0 <7.0.0 || >= 8.9.0"
+    "node": ">= 10.13.0"
   },
   "peerDependencies": {
-    "webpack": "^2.0.0 || ^3.0.0 || ^4.0.0"
+    "webpack": "^4.0.0 || ^5.0.0"
   },
   "repository": "https://github.com/webpack-contrib/thread-loader.git",
   "bugs": "https://github.com/webpack-contrib/thread-loader/issues",
