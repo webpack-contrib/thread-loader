@@ -188,6 +188,29 @@ class PoolWorker {
         });
         break;
       }
+      case 'loadModule': {
+        const { request, questionId } = message;
+        const { data } = this.jobs[id];
+        data.loadModule(request, (error, source, sourceMap, module) => {
+          this.writeJson({
+            type: 'result',
+            id: questionId,
+            error: error ? {
+              message: error.message,
+              details: error.details,
+              missing: error.missing,
+            } : null,
+            result: [
+              source,
+              sourceMap,
+              // TODO: Serialize module?
+              // module,
+            ],
+          });
+        });
+        finalCallback();
+        break;
+      }
       case 'resolve': {
         const { context, request, questionId } = message;
         const { data } = this.jobs[id];
