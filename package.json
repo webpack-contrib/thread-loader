@@ -28,9 +28,11 @@
     "webpack-defaults": "webpack-defaults"
   },
   "dependencies": {
-    "neo-async": "^2.6.0",
+    "comlink": "^4.1.0",
     "loader-runner": "^2.3.1",
-    "loader-utils": "^1.1.0"
+    "loader-utils": "^1.1.0",
+    "neo-async": "^2.6.0",
+    "rxjs": "^6.5.3"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
