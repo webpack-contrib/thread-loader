@@ -22,6 +22,7 @@ function pitch() {
     emitWarning: this.emitWarning,
     loadModule: this.loadModule,
     resolve: this.resolve,
+    getResolve: this.getResolve,
     target: this.target,
     minimize: this.minimize,
     resourceQuery: this.resourceQuery,

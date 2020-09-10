@@ -101,6 +101,18 @@ function writeJson(data) {
 
 const queue = asyncQueue(({ id, data }, taskCallback) => {
   try {
+    const resolveWithOptions = (context, request, callback, options) => {
+      callbackMap[nextQuestionId] = callback;
+      writeJson({
+        type: 'resolve',
+        id,
+        questionId: nextQuestionId,
+        context,
+        request,
+        options,
+      });
+      nextQuestionId += 1;
+    };
     loaderRunner.runLoaders({
       loaders: data.loaders,
       resource: data.resource,
@@ -119,15 +131,20 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
           nextQuestionId += 1;
         },
         resolve: (context, request, callback) => {
-          callbackMap[nextQuestionId] = callback;
-          writeJson({
-            type: 'resolve',
-            id,
-            questionId: nextQuestionId,
-            context,
-            request,
-          });
-          nextQuestionId += 1;
+          resolveWithOptions(context, request, callback);
+        },
+        // eslint-disable-next-line consistent-return
+        getResolve: options => (context, request, callback) => {
+          if (callback) {
+            resolveWithOptions(context, request, callback, options);
+          } else {
+            return new Promise((resolve, reject) => {
+              resolveWithOptions(context, request, (err, result) => {
+                if (err) reject(err);
+                else resolve(result);
+              }, options);
+            });
+          }
         },
         emitWarning: (warning) => {
           writeJson({

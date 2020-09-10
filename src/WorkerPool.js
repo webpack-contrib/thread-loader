@@ -212,20 +212,35 @@ class PoolWorker {
         break;
       }
       case 'resolve': {
-        const { context, request, questionId } = message;
+        const { context, request, options, questionId } = message;
         const { data } = this.jobs[id];
-        data.resolve(context, request, (error, result) => {
-          this.writeJson({
-            type: 'result',
-            id: questionId,
-            error: error ? {
-              message: error.message,
-              details: error.details,
-              missing: error.missing,
-            } : null,
-            result,
+        if (options) {
+          data.getResolve(options)(context, request, (error, result) => {
+            this.writeJson({
+              type: 'result',
+              id: questionId,
+              error: error ? {
+                message: error.message,
+                details: error.details,
+                missing: error.missing,
+              } : null,
+              result,
+            });
           });
-        });
+        } else {
+          data.resolve(context, request, (error, result) => {
+            this.writeJson({
+              type: 'result',
+              id: questionId,
+              error: error ? {
+                message: error.message,
+                details: error.details,
+                missing: error.missing,
+              } : null,
+              result,
+            });
+          });
+        }
         finalCallback();
         break;
       }
