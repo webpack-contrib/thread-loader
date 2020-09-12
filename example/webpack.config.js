@@ -1,8 +1,12 @@
 const path = require('path');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin'); // eslint-disable-line import/no-extraneous-dependencies
-const threadLoader = require('../src'); // eslint-disable-line import/no-extraneous-dependencies
 
-module.exports = (env) => {
+// eslint-disable-next-line import/no-extraneous-dependencies
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+// eslint-disable-line import/no-extraneous-dependencies
+const threadLoader = require('../dist');
+
+module.exports = (env = {}) => {
   const workerPool = {
     workers: +env.threads,
     poolTimeout: env.watch ? Infinity : 2000,
@@ -12,12 +16,14 @@ module.exports = (env) => {
     workerParallelJobs: 2,
     poolTimeout: env.watch ? Infinity : 2000,
   };
+
   if (+env.threads > 0) {
     threadLoader.warmup(workerPool, ['babel-loader', 'babel-preset-env']);
     threadLoader.warmup(workerPoolSass, ['sass-loader', 'css-loader']);
   }
+
   return {
-    mode: 'none',
+    mode: 'development',
     context: __dirname,
     entry: ['react', 'lodash-es', './index.js'],
     output: {
@@ -30,7 +36,7 @@ module.exports = (env) => {
           test: /\.js$/,
           use: [
             env.threads !== 0 && {
-              loader: path.resolve(__dirname, '../src/index.js'),
+              loader: path.resolve(__dirname, '../dist/index.js'),
               options: workerPool,
             },
             'babel-loader',
@@ -41,7 +47,7 @@ module.exports = (env) => {
           use: [
             MiniCssExtractPlugin.loader,
             env.threads !== 0 && {
-              loader: path.resolve(__dirname, '../src/index.js'),
+              loader: path.resolve(__dirname, '../dist/index.js'),
               options: workerPoolSass,
             },
             'css-loader',

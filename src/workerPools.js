@@ -1,4 +1,5 @@
 import os from 'os';
+
 import WorkerPool from './WorkerPool';
 
 const workerPools = Object.create(null);
@@ -23,9 +24,10 @@ function getPool(options) {
     poolRespawn: options.poolRespawn || false,
   };
   const tpKey = JSON.stringify(workerPoolOptions);
+
   workerPools[tpKey] = workerPools[tpKey] || new WorkerPool(workerPoolOptions);
-  const workerPool = workerPools[tpKey];
-  return workerPool;
+
+  return workerPools[tpKey];
 }
 
 export { getPool }; // eslint-disable-line import/prefer-default-export

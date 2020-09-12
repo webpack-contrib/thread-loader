@@ -1,5 +1,6 @@
 import childProcess from 'child_process';
 import stream from 'stream';
+
 import WorkerPool from '../src/WorkerPool';
 
 jest.mock('child_process', () => {
@@ -16,7 +17,9 @@ describe('workerPool', () => {
   it('should throw an error when worker.stdio is undefined', () => {
     const workerPool = new WorkerPool({});
     expect(() => workerPool.createWorker()).toThrowErrorMatchingSnapshot();
-    expect(() => workerPool.createWorker()).toThrowError('Please verify if you hit the OS open files limit');
+    expect(() => workerPool.createWorker()).toThrowError(
+      'Please verify if you hit the OS open files limit'
+    );
   });
 
   it('should not throw an error when worker.stdio is defined', () => {
@@ -52,17 +55,15 @@ describe('workerPool', () => {
     });
 
     const workerPool = new WorkerPool({
-      workerNodeArgs: [
-        '--max-old-space-size=1024',
-        '',
-        null,
-      ],
+      workerNodeArgs: ['--max-old-space-size=1024', '', null],
       workerParallelJobs: 20,
     });
 
     expect(() => workerPool.createWorker()).not.toThrow();
 
-    const nonSanitizedNodeArgs = childProcess.spawn.mock.calls[0][1].filter(opt => !opt);
+    const nonSanitizedNodeArgs = childProcess.spawn.mock.calls[0][1].filter(
+      (opt) => !opt
+    );
     expect(nonSanitizedNodeArgs.length).toEqual(0);
   });
 });
