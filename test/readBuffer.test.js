@@ -1,5 +1,6 @@
 const stream = require('stream');
-const readBuffer = require('../dist/readBuffer');
+
+const readBuffer = require('../src/readBuffer');
 
 test('data is read', (done) => {
   expect.assertions(3);

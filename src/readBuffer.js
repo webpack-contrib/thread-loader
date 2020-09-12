@@ -5,12 +5,14 @@ export default function readBuffer(pipe, length, callback) {
   }
 
   let remainingLength = length;
+
   const buffers = [];
 
   const readChunk = () => {
     const onChunk = (arg) => {
       let chunk = arg;
       let overflow;
+
       if (chunk.length > remainingLength) {
         overflow = chunk.slice(remainingLength);
         chunk = chunk.slice(0, remainingLength);
@@ -18,7 +20,9 @@ export default function readBuffer(pipe, length, callback) {
       } else {
         remainingLength -= chunk.length;
       }
+
       buffers.push(chunk);
+
       if (remainingLength === 0) {
         pipe.removeListener('data', onChunk);
         pipe.pause();

@@ -1,13 +1,15 @@
 const stack = (err, worker, workerId) => {
   const originError = (err.stack || '')
     .split('\n')
-    .filter(line => line.trim().startsWith('at'));
+    .filter((line) => line.trim().startsWith('at'));
 
   const workerError = worker
     .split('\n')
-    .filter(line => line.trim().startsWith('at'));
+    .filter((line) => line.trim().startsWith('at'));
 
-  const diff = workerError.slice(0, workerError.length - originError.length).join('\n');
+  const diff = workerError
+    .slice(0, workerError.length - originError.length)
+    .join('\n');
 
   originError.unshift(diff);
   originError.unshift(err.message);

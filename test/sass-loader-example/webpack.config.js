@@ -1,5 +1,7 @@
 const path = require('path');
+
 const MiniCssExtractPlugin = require('mini-css-extract-plugin'); // eslint-disable-line import/no-extraneous-dependencies
+
 const threadLoader = require('../../src'); // eslint-disable-line import/no-extraneous-dependencies
 
 module.exports = (env) => {
