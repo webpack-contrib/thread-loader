@@ -1,6 +1,18 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [3.0.0](https://github.com/webpack-contrib/thread-loader/compare/v2.1.3...v3.0.0) (2020-09-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* minimum supported `Node.js` version is `10.13`
+
+### Bug Fixes
+
+* `loadModule` and `fs` are now available in a loader context ([#88](https://github.com/webpack-contrib/thread-loader/issues/88)) ([ea5c9ad](https://github.com/webpack-contrib/thread-loader/commit/ea5c9ad8ffd3898e1fe136cc3cf371b3d15e3f97))
+* `getResolve` is now available in a loader context ([#99](https://github.com/webpack-contrib/thread-loader/issues/99)) ([16bbc23](https://github.com/webpack-contrib/thread-loader/commit/16bbc236dfdc26c857c97c8c005bbad6883c49ed))
 
 <a name="2.1.3"></a>
 ## [2.1.3](https://github.com/webpack-contrib/thread-loader/compare/v2.1.2...v2.1.3) (2019-08-08)
