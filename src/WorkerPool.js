@@ -7,6 +7,7 @@ import asyncMapSeries from 'neo-async/mapSeries';
 
 import readBuffer from './readBuffer';
 import WorkerError from './WorkerError';
+import { replacer, reviver } from './serializer';
 
 const workerPath = require.resolve('./worker');
 
@@ -107,7 +108,7 @@ class PoolWorker {
 
   writeJson(data) {
     const lengthBuffer = Buffer.alloc(4);
-    const messageBuffer = Buffer.from(JSON.stringify(data), 'utf-8');
+    const messageBuffer = Buffer.from(JSON.stringify(data, replacer), 'utf-8');
     lengthBuffer.writeInt32BE(messageBuffer.length, 0);
     this.writePipe.write(lengthBuffer);
     this.writePipe.write(messageBuffer);
@@ -141,7 +142,7 @@ class PoolWorker {
         }
         this.state = 'message read';
         const messageString = messageBuffer.toString('utf-8');
-        const message = JSON.parse(messageString);
+        const message = JSON.parse(messageString, reviver);
         this.state = 'process message';
         this.onWorkerMessage(message, (err) => {
           if (err) {

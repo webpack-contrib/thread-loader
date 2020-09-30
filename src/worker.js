@@ -6,6 +6,7 @@ import loaderRunner from 'loader-runner';
 import asyncQueue from 'neo-async/queue';
 
 import readBuffer from './readBuffer';
+import { replacer, reviver } from './serializer';
 
 const writePipe = fs.createWriteStream(null, { fd: 3 });
 const readPipe = fs.createReadStream(null, { fd: 4 });
@@ -93,7 +94,7 @@ function writeJson(data) {
   });
 
   const lengthBuffer = Buffer.alloc(4);
-  const messageBuffer = Buffer.from(JSON.stringify(data), 'utf-8');
+  const messageBuffer = Buffer.from(JSON.stringify(data, replacer), 'utf-8');
   lengthBuffer.writeInt32BE(messageBuffer.length, 0);
 
   writePipeWrite(lengthBuffer);
@@ -318,7 +319,7 @@ function readNextMessage() {
         return;
       }
       const messageString = messageBuffer.toString('utf-8');
-      const message = JSON.parse(messageString);
+      const message = JSON.parse(messageString, reviver);
 
       onMessage(message);
       setImmediate(() => readNextMessage());
