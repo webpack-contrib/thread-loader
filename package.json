@@ -1,6 +1,6 @@
 {
   "name": "thread-loader",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Runs the following loaders in a worker pool",
   "license": "MIT",
   "repository": "webpack-contrib/thread-loader",

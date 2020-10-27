@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.0.1](https://github.com/webpack-contrib/thread-loader/compare/v3.0.0...v3.0.1) (2020-10-27)
+
+
+### Bug Fixes
+
+* pass rootContext to loaders ([#104](https://github.com/webpack-contrib/thread-loader/issues/104)) ([8e56785](https://github.com/webpack-contrib/thread-loader/commit/8e567853efa3a0d6b95423d3598a68ad77598bc4))
+
 ## [3.0.0](https://github.com/webpack-contrib/thread-loader/compare/v2.1.3...v3.0.0) (2020-09-12)
 
 
