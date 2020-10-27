@@ -14,6 +14,9 @@ module.exports = (env) => {
     workerParallelJobs: 2,
     poolTimeout: env.watch ? Infinity : 2000,
   };
+  const sassLoaderOptions = {
+    sourceMap: true,
+  };
   if (+env.threads > 0) {
     threadLoader.warmup(workerPool, ['babel-loader', 'babel-preset-env']);
     threadLoader.warmup(workerPoolSass, ['sass-loader', 'css-loader']);
@@ -47,7 +50,7 @@ module.exports = (env) => {
               options: workerPoolSass,
             },
             'css-loader',
-            'sass-loader',
+            { loader: 'sass-loader', options: sassLoaderOptions },
           ].filter(Boolean),
         },
       ],
