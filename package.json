@@ -59,7 +59,7 @@
     "css-loader": "^5.0.0",
     "del": "^5.1.0",
     "del-cli": "^3.0.1",
-    "eslint": "^7.12.1",
+    "eslint": "^7.16.0",
     "eslint-config-prettier": "^6.14.0",
     "eslint-plugin-import": "^2.22.1",
     "husky": "^4.3.0",
