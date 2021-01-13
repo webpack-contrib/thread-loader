@@ -4,6 +4,6 @@
     "react": "^16.6.3"
   },
   "devDependencies": {
-    "babel-loader": "^8.1.0"
+    "babel-loader": "^8.2.2"
   }
 }
