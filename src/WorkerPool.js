@@ -1,9 +1,12 @@
 /* eslint-disable no-console */
 
 import childProcess from 'child_process';
-import asyncQueue from 'async/queue';
-import asyncMapSeries from 'async/mapSeries';
+
+import asyncQueue from 'neo-async/queue';
+import asyncMapSeries from 'neo-async/mapSeries';
+
 import readBuffer from './readBuffer';
+import WorkerError from './WorkerError';
 
 const workerPath = require.resolve('./worker');
 
@@ -11,19 +14,76 @@ let workerId = 0;
 
 class PoolWorker {
   constructor(options, onJobDone) {
+    this.disposed = false;
     this.nextJobId = 0;
     this.jobs = Object.create(null);
     this.activeJobs = 0;
     this.onJobDone = onJobDone;
     this.id = workerId;
+
     workerId += 1;
-    this.worker = childProcess.spawn(process.execPath, [].concat(options.nodeArgs || []).concat(workerPath, options.parallelJobs), {
-      stdio: ['ignore', 1, 2, 'pipe', 'pipe'],
-    });
+    // Empty or invalid node args would break the child process
+    const sanitizedNodeArgs = (options.nodeArgs || []).filter((opt) => !!opt);
+
+    this.worker = childProcess.spawn(
+      process.execPath,
+      [].concat(sanitizedNodeArgs).concat(workerPath, options.parallelJobs),
+      {
+        detached: true,
+        stdio: ['ignore', 'pipe', 'pipe', 'pipe', 'pipe'],
+      }
+    );
+
+    this.worker.unref();
+
+    // This prevents a problem where the worker stdio can be undefined
+    // when the kernel hits the limit of open files.
+    // More info can be found on: https://github.com/webpack-contrib/thread-loader/issues/2
+    if (!this.worker.stdio) {
+      throw new Error(
+        `Failed to create the worker pool with workerId: ${workerId} and ${''}configuration: ${JSON.stringify(
+          options
+        )}. Please verify if you hit the OS open files limit.`
+      );
+    }
+
     const [, , , readPipe, writePipe] = this.worker.stdio;
     this.readPipe = readPipe;
     this.writePipe = writePipe;
+    this.listenStdOutAndErrFromWorker(this.worker.stdout, this.worker.stderr);
     this.readNextMessage();
+  }
+
+  listenStdOutAndErrFromWorker(workerStdout, workerStderr) {
+    if (workerStdout) {
+      workerStdout.on('data', this.writeToStdout);
+    }
+
+    if (workerStderr) {
+      workerStderr.on('data', this.writeToStderr);
+    }
+  }
+
+  ignoreStdOutAndErrFromWorker(workerStdout, workerStderr) {
+    if (workerStdout) {
+      workerStdout.removeListener('data', this.writeToStdout);
+    }
+
+    if (workerStderr) {
+      workerStderr.removeListener('data', this.writeToStderr);
+    }
+  }
+
+  writeToStdout(data) {
+    if (!this.disposed) {
+      process.stdout.write(data);
+    }
+  }
+
+  writeToStderr(data) {
+    if (!this.disposed) {
+      process.stderr.write(data);
+    }
   }
 
   run(data, callback) {
@@ -46,15 +106,15 @@ class PoolWorker {
   }
 
   writeJson(data) {
-    const lengthBuffer = new Buffer(4);
-    const messageBuffer = new Buffer(JSON.stringify(data), 'utf-8');
+    const lengthBuffer = Buffer.alloc(4);
+    const messageBuffer = Buffer.from(JSON.stringify(data), 'utf-8');
     lengthBuffer.writeInt32BE(messageBuffer.length, 0);
     this.writePipe.write(lengthBuffer);
     this.writePipe.write(messageBuffer);
   }
 
   writeEnd() {
-    const lengthBuffer = new Buffer(4);
+    const lengthBuffer = Buffer.alloc(4);
     lengthBuffer.writeInt32BE(0, 0);
     this.writePipe.write(lengthBuffer);
   }
@@ -63,15 +123,20 @@ class PoolWorker {
     this.state = 'read length';
     this.readBuffer(4, (lengthReadError, lengthBuffer) => {
       if (lengthReadError) {
-        console.error(`Failed to communicate with worker (read length) ${lengthReadError}`);
+        console.error(
+          `Failed to communicate with worker (read length) ${lengthReadError}`
+        );
         return;
       }
       this.state = 'length read';
       const length = lengthBuffer.readInt32BE(0);
+
       this.state = 'read message';
       this.readBuffer(length, (messageError, messageBuffer) => {
         if (messageError) {
-          console.error(`Failed to communicate with worker (read message) ${messageError}`);
+          console.error(
+            `Failed to communicate with worker (read message) ${messageError}`
+          );
           return;
         }
         this.state = 'message read';
@@ -80,7 +145,9 @@ class PoolWorker {
         this.state = 'process message';
         this.onWorkerMessage(message, (err) => {
           if (err) {
-            console.error(`Failed to communicate with worker (process message) ${err}`);
+            console.error(
+              `Failed to communicate with worker (process message) ${err}`
+            );
             return;
           }
           this.state = 'soon next';
@@ -95,62 +162,111 @@ class PoolWorker {
     switch (type) {
       case 'job': {
         const { data, error, result } = message;
-        asyncMapSeries(data, (length, callback) => this.readBuffer(length, callback), (eachErr, buffers) => {
-          const { callback: jobCallback } = this.jobs[id];
-          const callback = (err, arg) => {
-            if (jobCallback) {
-              delete this.jobs[id];
-              this.activeJobs -= 1;
-              this.onJobDone();
-              if (err) {
-                jobCallback(err instanceof Error ? err : new Error(err), arg);
-              } else {
-                jobCallback(null, arg);
-              }
-            }
-            finalCallback();
-          };
-          if (eachErr) {
-            callback(eachErr);
-            return;
-          }
-          let bufferPosition = 0;
-          if (result.result) {
-            result.result = result.result.map((r) => {
-              if (r.buffer) {
-                const buffer = buffers[bufferPosition];
-                bufferPosition += 1;
-                if (r.string) {
-                  return buffer.toString('utf-8');
+        asyncMapSeries(
+          data,
+          (length, callback) => this.readBuffer(length, callback),
+          (eachErr, buffers) => {
+            const { callback: jobCallback } = this.jobs[id];
+            const callback = (err, arg) => {
+              if (jobCallback) {
+                delete this.jobs[id];
+                this.activeJobs -= 1;
+                this.onJobDone();
+                if (err) {
+                  jobCallback(err instanceof Error ? err : new Error(err), arg);
+                } else {
+                  jobCallback(null, arg);
                 }
-                return buffer;
               }
-              return r.data;
-            });
+              finalCallback();
+            };
+            if (eachErr) {
+              callback(eachErr);
+              return;
+            }
+            let bufferPosition = 0;
+            if (result.result) {
+              result.result = result.result.map((r) => {
+                if (r.buffer) {
+                  const buffer = buffers[bufferPosition];
+                  bufferPosition += 1;
+                  if (r.string) {
+                    return buffer.toString('utf-8');
+                  }
+                  return buffer;
+                }
+                return r.data;
+              });
+            }
+            if (error) {
+              callback(this.fromErrorObj(error), result);
+              return;
+            }
+            callback(null, result);
           }
-          if (error) {
-            callback(this.fromErrorObj(error), result);
-            return;
-          }
-          callback(null, result);
-        });
+        );
         break;
       }
-      case 'resolve': {
-        const { context, request, questionId } = message;
+      case 'loadModule': {
+        const { request, questionId } = message;
         const { data } = this.jobs[id];
-        data.resolve(context, request, (error, result) => {
+        // eslint-disable-next-line no-unused-vars
+        data.loadModule(request, (error, source, sourceMap, module) => {
           this.writeJson({
             type: 'result',
             id: questionId,
-            error: error ? {
-              message: error.message,
-              details: error.details,
-              missing: error.missing,
-            } : null,
-            result,
+            error: error
+              ? {
+                  message: error.message,
+                  details: error.details,
+                  missing: error.missing,
+                }
+              : null,
+            result: [
+              source,
+              sourceMap,
+              // TODO: Serialize module?
+              // module,
+            ],
           });
         });
+        finalCallback();
+        break;
+      }
+      case 'resolve': {
+        const { context, request, options, questionId } = message;
+        const { data } = this.jobs[id];
+        if (options) {
+          data.getResolve(options)(context, request, (error, result) => {
+            this.writeJson({
+              type: 'result',
+              id: questionId,
+              error: error
+                ? {
+                    message: error.message,
+                    details: error.details,
+                    missing: error.missing,
+                  }
+                : null,
+              result,
+            });
+          });
+        } else {
+          data.resolve(context, request, (error, result) => {
+            this.writeJson({
+              type: 'result',
+              id: questionId,
+              error: error
+                ? {
+                    message: error.message,
+                    details: error.details,
+                    missing: error.missing,
+                  }
+                : null,
+              result,
+            });
+          });
+        }
         finalCallback();
         break;
       }
@@ -183,14 +299,7 @@ class PoolWorker {
     } else {
       obj = arg;
     }
-    const err = new Error(obj.message);
-    err.message = obj.message;
-    if (obj.stack) {
-      err.stack = `${obj.stack}\n\tfrom thread-loader (worker ${this.id})\n${err.stack}`;
-    }
-    err.hideStack = obj.hideStack;
-    err.details = obj.details;
-    return err;
+    return new WorkerError(obj, this.id);
   }
 
   readBuffer(length, callback) {
@@ -198,7 +307,11 @@ class PoolWorker {
   }
 
   dispose() {
-    this.writeEnd();
+    if (!this.disposed) {
+      this.disposed = true;
+      this.ignoreStdOutAndErrFromWorker(this.worker.stdout, this.worker.stderr);
+      this.writeEnd();
+    }
   }
 }
 
@@ -212,7 +325,33 @@ export default class WorkerPool {
     this.workers = new Set();
     this.activeJobs = 0;
     this.timeout = null;
-    this.poolQueue = asyncQueue(this.distributeJob.bind(this), options.poolParallelJobs);
+    this.poolQueue = asyncQueue(
+      this.distributeJob.bind(this),
+      options.poolParallelJobs
+    );
+    this.terminated = false;
+
+    this.setupLifeCycle();
+  }
+
+  isAbleToRun() {
+    return !this.terminated;
+  }
+
+  terminate() {
+    if (this.terminated) {
+      return;
+    }
+
+    this.terminated = true;
+    this.poolQueue.kill();
+    this.disposeWorkers(true);
+  }
+
+  setupLifeCycle() {
+    process.on('exit', () => {
+      this.terminate();
+    });
   }
 
   run(data, callback) {
@@ -232,7 +371,10 @@ export default class WorkerPool {
         bestWorker = worker;
       }
     }
-    if (bestWorker && (bestWorker.activeJobs === 0 || this.workers.size >= this.numberOfWorkers)) {
+    if (
+      bestWorker &&
+      (bestWorker.activeJobs === 0 || this.workers.size >= this.numberOfWorkers)
+    ) {
       bestWorker.run(data, callback);
       return;
     }
@@ -242,10 +384,13 @@ export default class WorkerPool {
 
   createWorker() {
     // spin up a new worker
-    const newWorker = new PoolWorker({
-      nodeArgs: this.workerNodeArgs,
-      parallelJobs: this.workerParallelJobs,
-    }, () => this.onJobDone());
+    const newWorker = new PoolWorker(
+      {
+        nodeArgs: this.workerNodeArgs,
+        parallelJobs: this.workerParallelJobs,
+      },
+      () => this.onJobDone()
+    );
     this.workers.add(newWorker);
     return newWorker;
   }
@@ -263,8 +408,13 @@ export default class WorkerPool {
     }
   }
 
-  disposeWorkers() {
-    if (this.activeJobs === 0) {
+  disposeWorkers(fromTerminate) {
+    if (!this.options.poolRespawn && !fromTerminate) {
+      this.terminate();
+      return;
+    }
+
+    if (this.activeJobs === 0 || fromTerminate) {
       for (const worker of this.workers) {
         worker.dispose();
       }
@@ -272,4 +422,3 @@ export default class WorkerPool {
     }
   }
 }
-

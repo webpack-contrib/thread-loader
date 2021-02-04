@@ -1,21 +1,73 @@
-/* global require */
 /* eslint-disable no-console */
 import fs from 'fs';
 import NativeModule from 'module';
+
 import loaderRunner from 'loader-runner';
-import asyncQueue from 'async/queue';
+import asyncQueue from 'neo-async/queue';
+
 import readBuffer from './readBuffer';
 
 const writePipe = fs.createWriteStream(null, { fd: 3 });
 const readPipe = fs.createReadStream(null, { fd: 4 });
 
-writePipe.on('error', console.error.bind(console));
-readPipe.on('error', console.error.bind(console));
+writePipe.on('finish', onTerminateWrite);
+readPipe.on('end', onTerminateRead);
+writePipe.on('close', onTerminateWrite);
+readPipe.on('close', onTerminateRead);
 
-const PARALLEL_JOBS = +process.argv[2];
+readPipe.on('error', onError);
+writePipe.on('error', onError);
 
+const PARALLEL_JOBS = +process.argv[2] || 20;
+
+let terminated = false;
 let nextQuestionId = 0;
 const callbackMap = Object.create(null);
+
+function onError(error) {
+  console.error(error);
+}
+
+function onTerminateRead() {
+  terminateRead();
+}
+
+function onTerminateWrite() {
+  terminateWrite();
+}
+
+function writePipeWrite(...args) {
+  if (!terminated) {
+    writePipe.write(...args);
+  }
+}
+
+function writePipeCork() {
+  if (!terminated) {
+    writePipe.cork();
+  }
+}
+
+function writePipeUncork() {
+  if (!terminated) {
+    writePipe.uncork();
+  }
+}
+
+function terminateRead() {
+  terminated = true;
+  readPipe.removeAllListeners();
+}
+
+function terminateWrite() {
+  terminated = true;
+  writePipe.removeAllListeners();
+}
+
+function terminate() {
+  terminateRead();
+  terminateWrite();
+}
 
 function toErrorObj(err) {
   return {
@@ -35,107 +87,157 @@ function toNativeError(obj) {
 }
 
 function writeJson(data) {
-  writePipe.cork();
-  process.nextTick(() => writePipe.uncork());
-  const lengthBuffer = new Buffer(4);
-  const messageBuffer = new Buffer(JSON.stringify(data), 'utf-8');
+  writePipeCork();
+  process.nextTick(() => {
+    writePipeUncork();
+  });
+
+  const lengthBuffer = Buffer.alloc(4);
+  const messageBuffer = Buffer.from(JSON.stringify(data), 'utf-8');
   lengthBuffer.writeInt32BE(messageBuffer.length, 0);
-  writePipe.write(lengthBuffer);
-  writePipe.write(messageBuffer);
+
+  writePipeWrite(lengthBuffer);
+  writePipeWrite(messageBuffer);
 }
 
 const queue = asyncQueue(({ id, data }, taskCallback) => {
   try {
-    loaderRunner.runLoaders({
-      loaders: data.loaders,
-      resource: data.resource,
-      readResource: fs.readFile.bind(fs),
-      context: {
-        version: 2,
-        resolve: (context, request, callback) => {
-          callbackMap[nextQuestionId] = callback;
-          writeJson({
-            type: 'resolve',
-            id,
-            questionId: nextQuestionId,
-            context,
-            request,
-          });
-          nextQuestionId += 1;
-        },
-        emitWarning: (warning) => {
-          writeJson({
-            type: 'emitWarning',
-            id,
-            data: toErrorObj(warning),
-          });
-        },
-        emitError: (error) => {
-          writeJson({
-            type: 'emitError',
-            id,
-            data: toErrorObj(error),
-          });
-        },
-        exec: (code, filename) => {
-          const module = new NativeModule(filename, this);
-          module.paths = NativeModule._nodeModulePaths(this.context); // eslint-disable-line no-underscore-dangle
-          module.filename = filename;
-          module._compile(code, filename); // eslint-disable-line no-underscore-dangle
-          return module.exports;
-        },
-        options: {
-          context: data.optionsContext,
-        },
-        webpack: true,
-        'thread-loader': true,
-        sourceMap: data.sourceMap,
-      },
-    }, (err, lrResult) => {
-      const {
-        result,
-        cacheable,
-        fileDependencies,
-        contextDependencies,
-      } = lrResult;
-      const buffersToSend = [];
-      const convertedResult = Array.isArray(result) && result.map((item) => {
-        const isBuffer = Buffer.isBuffer(item);
-        if (isBuffer) {
-          buffersToSend.push(item);
-          return {
-            buffer: true,
-          };
-        }
-        if (typeof item === 'string') {
-          const stringBuffer = new Buffer(item, 'utf-8');
-          buffersToSend.push(stringBuffer);
-          return {
-            buffer: true,
-            string: true,
-          };
-        }
-        return {
-          data: item,
-        };
-      });
+    const resolveWithOptions = (context, request, callback, options) => {
+      callbackMap[nextQuestionId] = callback;
       writeJson({
-        type: 'job',
+        type: 'resolve',
         id,
-        error: err && toErrorObj(err),
-        result: {
-          result: convertedResult,
+        questionId: nextQuestionId,
+        context,
+        request,
+        options,
+      });
+      nextQuestionId += 1;
+    };
+    loaderRunner.runLoaders(
+      {
+        loaders: data.loaders,
+        resource: data.resource,
+        readResource: fs.readFile.bind(fs),
+        context: {
+          version: 2,
+          fs,
+          loadModule: (request, callback) => {
+            callbackMap[nextQuestionId] = (error, result) =>
+              callback(error, ...result);
+            writeJson({
+              type: 'loadModule',
+              id,
+              questionId: nextQuestionId,
+              request,
+            });
+            nextQuestionId += 1;
+          },
+          resolve: (context, request, callback) => {
+            resolveWithOptions(context, request, callback);
+          },
+          // eslint-disable-next-line consistent-return
+          getResolve: (options) => (context, request, callback) => {
+            if (callback) {
+              resolveWithOptions(context, request, callback, options);
+            } else {
+              return new Promise((resolve, reject) => {
+                resolveWithOptions(
+                  context,
+                  request,
+                  (err, result) => {
+                    if (err) {
+                      reject(err);
+                    } else {
+                      resolve(result);
+                    }
+                  },
+                  options
+                );
+              });
+            }
+          },
+          emitWarning: (warning) => {
+            writeJson({
+              type: 'emitWarning',
+              id,
+              data: toErrorObj(warning),
+            });
+          },
+          emitError: (error) => {
+            writeJson({
+              type: 'emitError',
+              id,
+              data: toErrorObj(error),
+            });
+          },
+          exec: (code, filename) => {
+            const module = new NativeModule(filename, this);
+            module.paths = NativeModule._nodeModulePaths(this.context); // eslint-disable-line no-underscore-dangle
+            module.filename = filename;
+            module._compile(code, filename); // eslint-disable-line no-underscore-dangle
+            return module.exports;
+          },
+          options: {
+            context: data.optionsContext,
+          },
+          webpack: true,
+          'thread-loader': true,
+          sourceMap: data.sourceMap,
+          target: data.target,
+          minimize: data.minimize,
+          resourceQuery: data.resourceQuery,
+          rootContext: data.rootContext,
+        },
+      },
+      (err, lrResult) => {
+        const {
+          result,
           cacheable,
           fileDependencies,
           contextDependencies,
-        },
-        data: buffersToSend.map(buffer => buffer.length),
-      });
-      buffersToSend.forEach((buffer) => {
-        writePipe.write(buffer);
-      });
-      setImmediate(taskCallback);
-    });
+        } = lrResult;
+        const buffersToSend = [];
+        const convertedResult =
+          Array.isArray(result) &&
+          result.map((item) => {
+            const isBuffer = Buffer.isBuffer(item);
+            if (isBuffer) {
+              buffersToSend.push(item);
+              return {
+                buffer: true,
+              };
+            }
+            if (typeof item === 'string') {
+              const stringBuffer = Buffer.from(item, 'utf-8');
+              buffersToSend.push(stringBuffer);
+              return {
+                buffer: true,
+                string: true,
+              };
+            }
+            return {
+              data: item,
+            };
+          });
+        writeJson({
+          type: 'job',
+          id,
+          error: err && toErrorObj(err),
+          result: {
+            result: convertedResult,
+            cacheable,
+            fileDependencies,
+            contextDependencies,
+          },
+          data: buffersToSend.map((buffer) => buffer.length),
+        });
+        buffersToSend.forEach((buffer) => {
+          writePipeWrite(buffer);
+        });
+        setImmediate(taskCallback);
+      }
+    );
   } catch (e) {
     writeJson({
       type: 'job',
@@ -145,6 +247,13 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
     taskCallback();
   }
 }, PARALLEL_JOBS);
+
+function dispose() {
+  terminate();
+
+  queue.kill();
+  process.exit(0);
+}
 
 function onMessage(message) {
   try {
@@ -169,7 +278,7 @@ function onMessage(message) {
       case 'warmup': {
         const { requires } = message;
         // load modules into process
-        requires.forEach(r => require(r)); // eslint-disable-line import/no-dynamic-require, global-require
+        requires.forEach((r) => require(r)); // eslint-disable-line import/no-dynamic-require, global-require
         break;
       }
       default: {
@@ -185,22 +294,33 @@ function onMessage(message) {
 function readNextMessage() {
   readBuffer(readPipe, 4, (lengthReadError, lengthBuffer) => {
     if (lengthReadError) {
-      console.error(`Failed to communicate with main process (read length) ${lengthReadError}`);
+      console.error(
+        `Failed to communicate with main process (read length) ${lengthReadError}`
+      );
       return;
     }
-    const length = lengthBuffer.readInt32BE(0);
+
+    const length = lengthBuffer.length && lengthBuffer.readInt32BE(0);
+
     if (length === 0) {
-      // worker should exit
-      process.exit(0);
+      // worker should dispose and exit
+      dispose();
       return;
     }
     readBuffer(readPipe, length, (messageError, messageBuffer) => {
+      if (terminated) {
+        return;
+      }
+
       if (messageError) {
-        console.error(`Failed to communicate with main process (read message) ${messageError}`);
+        console.error(
+          `Failed to communicate with main process (read message) ${messageError}`
+        );
         return;
       }
       const messageString = messageBuffer.toString('utf-8');
       const message = JSON.parse(messageString);
+
       onMessage(message);
       setImmediate(() => readNextMessage());
     });
