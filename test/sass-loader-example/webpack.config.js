@@ -14,6 +14,12 @@ module.exports = (env) => {
     workerParallelJobs: 2,
     poolTimeout: env.watch ? Infinity : 2000,
   };
+  const sassLoaderOptions = {
+    sourceMap: true,
+    sassOptions: {
+      includePaths: [path.resolve(__dirname, 'assets')],
+    },
+  };
   if (+env.threads > 0) {
     threadLoader.warmup(workerPool, ['babel-loader', 'babel-preset-env']);
     threadLoader.warmup(workerPoolSass, ['sass-loader', 'css-loader']);
@@ -47,14 +53,7 @@ module.exports = (env) => {
               options: workerPoolSass,
             },
             'css-loader',
-            {
-              loader: 'sass-loader',
-              options: {
-                sassOptions: {
-                  includePaths: [path.resolve(__dirname, 'assets')],
-                },
-              },
-            },
+            { loader: 'sass-loader', options: sassLoaderOptions },
           ].filter(Boolean),
         },
       ],

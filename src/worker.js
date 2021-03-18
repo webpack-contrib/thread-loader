@@ -188,6 +188,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
           target: data.target,
           minimize: data.minimize,
           resourceQuery: data.resourceQuery,
+          rootContext: data.rootContext,
         },
       },
       (err, lrResult) => {
