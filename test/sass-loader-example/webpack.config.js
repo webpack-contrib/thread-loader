@@ -47,7 +47,14 @@ module.exports = (env) => {
               options: workerPoolSass,
             },
             'css-loader',
-            'sass-loader',
+            {
+              loader: 'sass-loader',
+              options: {
+                sassOptions: {
+                  includePaths: [path.resolve(__dirname, 'assets')],
+                },
+              },
+            },
           ].filter(Boolean),
         },
       ],
