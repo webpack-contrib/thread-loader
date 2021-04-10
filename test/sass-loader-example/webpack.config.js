@@ -16,6 +16,9 @@ module.exports = (env) => {
   };
   const sassLoaderOptions = {
     sourceMap: true,
+    sassOptions: {
+      includePaths: [path.resolve(__dirname, 'assets')],
+    },
   };
   if (+env.threads > 0) {
     threadLoader.warmup(workerPool, ['babel-loader', 'babel-preset-env']);
