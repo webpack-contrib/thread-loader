@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.0.2](https://github.com/webpack-contrib/thread-loader/compare/v3.0.1...v3.0.2) (2021-04-12)
+
+
+### Bug Fixes
+
+* support serialization of RegExp ([#102](https://github.com/webpack-contrib/thread-loader/issues/102)) ([3766560](https://github.com/webpack-contrib/thread-loader/commit/37665608bea01c4072fa974b038de1352a82961c))
+
 ### [3.0.1](https://github.com/webpack-contrib/thread-loader/compare/v3.0.0...v3.0.1) (2020-10-27)
 
 
