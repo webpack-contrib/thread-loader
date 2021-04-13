@@ -2,8 +2,12 @@
 import fs from 'fs';
 import NativeModule from 'module';
 
+import querystring from 'querystring';
+
 import loaderRunner from 'loader-runner';
 import asyncQueue from 'neo-async/queue';
+import parseJson from 'json-parse-better-errors';
+import { validate } from 'schema-utils';
 
 import readBuffer from './readBuffer';
 import { replacer, reviver } from './serializer';
@@ -157,6 +161,53 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
                 );
               });
             }
+          },
+          // Not an arrow function because it uses this
+          getOptions(schema) {
+            // loaders, loaderIndex will be defined by runLoaders
+            const loader = this.loaders[this.loaderIndex];
+
+            // Verbatim copy from
+            // https://github.com/webpack/webpack/blob/v5.31.2/lib/NormalModule.js#L471-L508
+            // except eslint/prettier differences
+            // -- unfortunate result of getOptions being synchronous functions.
+
+            let { options } = loader;
+
+            if (typeof options === 'string') {
+              if (options.substr(0, 1) === '{' && options.substr(-1) === '}') {
+                try {
+                  options = parseJson(options);
+                } catch (e) {
+                  throw new Error(`Cannot parse string options: ${e.message}`);
+                }
+              } else {
+                options = querystring.parse(options, '&', '=', {
+                  maxKeys: 0,
+                });
+              }
+            }
+
+            // eslint-disable-next-line no-undefined
+            if (options === null || options === undefined) {
+              options = {};
+            }
+
+            if (schema) {
+              let name = 'Loader';
+              let baseDataPath = 'options';
+              let match;
+              // eslint-disable-next-line no-cond-assign
+              if (schema.title && (match = /^(.+) (.+)$/.exec(schema.title))) {
+                [, name, baseDataPath] = match;
+              }
+              validate(schema, options, {
+                name,
+                baseDataPath,
+              });
+            }
+
+            return options;
           },
           emitWarning: (warning) => {
             writeJson({
