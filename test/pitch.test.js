@@ -15,6 +15,7 @@ const runGetPoolMock = (error) => {
       isAbleToRun: () => true,
       run: jest.fn((opts, cb) => {
         cb(error, {
+          buildDependencies: [],
           fileDependencies: [],
           contextDependencies: [],
           result: {},

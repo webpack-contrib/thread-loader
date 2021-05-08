@@ -119,6 +119,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
       });
       nextQuestionId += 1;
     };
+    const buildDependencies = [];
     loaderRunner.runLoaders(
       {
         loaders: data.loaders,
@@ -230,6 +231,9 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
             module._compile(code, filename); // eslint-disable-line no-underscore-dangle
             return module.exports;
           },
+          addBuildDependency: (filename) => {
+            buildDependencies.push(filename);
+          },
           options: {
             context: data.optionsContext,
           },
@@ -279,6 +283,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
           result: {
             result: convertedResult,
             cacheable,
+            buildDependencies,
             fileDependencies,
             contextDependencies,
           },
