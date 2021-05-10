@@ -36,16 +36,15 @@ function pitch() {
     },
     (err, r) => {
       if (r) {
+        r.fileDependencies.forEach((d) => this.addDependency(d));
+        r.contextDependencies.forEach((d) => this.addContextDependency(d));
+        r.missingDependencies.forEach((d) => this.addMissingDependency(d));
         r.buildDependencies.forEach((d) =>
           // Compatibility with webpack v4
           this.addBuildDependency
             ? this.addBuildDependency(d)
             : this.addDependency(d)
         );
-        r.fileDependencies.forEach((d) => this.addDependency(d));
-        r.contextDependencies.forEach((d) => this.addContextDependency(d));
-        r.buildDependencies.forEach((d) => this.addBuildDependency(d));
-        r.missingDependencies.forEach((d) => this.addMissingDependency(d));
       }
 
       if (err) {
