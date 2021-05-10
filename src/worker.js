@@ -119,7 +119,9 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
       });
       nextQuestionId += 1;
     };
+
     const buildDependencies = [];
+
     loaderRunner.runLoaders(
       {
         loaders: data.loaders,
@@ -252,6 +254,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
           cacheable,
           fileDependencies,
           contextDependencies,
+          missingDependencies,
         } = lrResult;
         const buffersToSend = [];
         const convertedResult =
@@ -283,9 +286,10 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
           result: {
             result: convertedResult,
             cacheable,
-            buildDependencies,
             fileDependencies,
             contextDependencies,
+            missingDependencies,
+            buildDependencies,
           },
           data: buffersToSend.map((buffer) => buffer.length),
         });
