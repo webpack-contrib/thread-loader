@@ -36,6 +36,7 @@ function pitch() {
     },
     (err, r) => {
       if (r) {
+        r.buildDependencies.forEach((d) => this.addBuildDependency(d));
         r.fileDependencies.forEach((d) => this.addDependency(d));
         r.contextDependencies.forEach((d) => this.addContextDependency(d));
       }
