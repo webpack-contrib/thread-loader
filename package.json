@@ -77,8 +77,7 @@
     "sass": "^1.27.0",
     "sass-loader": "^11.0.1",
     "standard-version": "^9.0.0",
-    "webpack": "^5.3.0",
-    "webpack-cli": "^4.1.0"
+    "webpack": "^5.3.0"
   },
   "keywords": [
     "webpack"
