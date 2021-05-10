@@ -22,7 +22,11 @@ module.exports = (env) => {
   };
   if (+env.threads > 0) {
     threadLoader.warmup(workerPool, ['babel-loader', 'babel-preset-env']);
-    threadLoader.warmup(workerPoolSass, ['sass-loader', 'css-loader']);
+    threadLoader.warmup(workerPoolSass, [
+      'sass-loader',
+      'postcss-loader',
+      'css-loader',
+    ]);
   }
   return {
     mode: 'none',
@@ -53,6 +57,14 @@ module.exports = (env) => {
               options: workerPoolSass,
             },
             'css-loader',
+            {
+              loader: 'postcss-loader',
+              options: {
+                postcssOptions: {
+                  config: path.resolve(__dirname, './postcss.config.js'),
+                },
+              },
+            },
             { loader: 'sass-loader', options: sassLoaderOptions },
           ].filter(Boolean),
         },
