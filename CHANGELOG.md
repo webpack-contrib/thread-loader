@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.0.4](https://github.com/webpack-contrib/thread-loader/compare/v3.0.3...v3.0.4) (2021-05-10)
+
+
+### Bug Fixes
+
+* do not crash on `this.addBuildDependency` usage ([#117](https://github.com/webpack-contrib/thread-loader/issues/117)) ([1c7a8a2](https://github.com/webpack-contrib/thread-loader/commit/1c7a8a2454c7540a226b2a7fa6e0cbfef6ebf2c6))
+* `this.addMissingDependency` works fine ([#119](https://github.com/webpack-contrib/thread-loader/issues/119)) ([5a0ea0c](https://github.com/webpack-contrib/thread-loader/commit/5a0ea0c4239e69cffd68e79a01f9615250c66755))
+
 ### [3.0.3](https://github.com/webpack-contrib/thread-loader/compare/v3.0.2...v3.0.3) (2021-04-13)
 
 
