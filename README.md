@@ -44,9 +44,9 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        include: path.resolve('src'),
+        include: path.resolve("src"),
         use: [
-          'thread-loader',
+          "thread-loader",
           // your expensive loader (e.g babel-loader)
         ],
       },
@@ -60,7 +60,7 @@ module.exports = {
 ```js
 use: [
   {
-    loader: 'thread-loader',
+    loader: "thread-loader",
     // loaders with equal options will share worker pools
     options: {
       // the number of spawned workers, defaults to (number of cpus - 1) or
@@ -72,7 +72,7 @@ use: [
       workerParallelJobs: 50,
 
       // additional node.js arguments
-      workerNodeArgs: ['--max-old-space-size=1024'],
+      workerNodeArgs: ["--max-old-space-size=1024"],
 
       // Allow to respawn a dead worker pool
       // respawning slows down the entire compilation
@@ -91,7 +91,7 @@ use: [
 
       // name of the pool
       // can be used to create different pools with elsewise identical options
-      name: 'my-pool',
+      name: "my-pool",
     },
   },
   // your expensive loader (e.g babel-loader)
@@ -105,7 +105,7 @@ To prevent the high delay when booting workers it possible to warmup the worker 
 This boots the max number of workers in the pool and loads specified modules into the node.js module cache.
 
 ```js
-const threadLoader = require('thread-loader');
+const threadLoader = require("thread-loader");
 
 threadLoader.warmup(
   {
@@ -115,9 +115,9 @@ threadLoader.warmup(
   [
     // modules to load
     // can be any module, i. e.
-    'babel-loader',
-    'babel-preset-es2015',
-    'sass-loader',
+    "babel-loader",
+    "babel-preset-es2015",
+    "sass-loader",
   ]
 );
 ```

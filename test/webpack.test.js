@@ -1,6 +1,6 @@
-import webpack from 'webpack';
+import webpack from "webpack";
 
-import sassLoaderConfig from './sass-loader-example/webpack.config';
+import sassLoaderConfig from "./sass-loader-example/webpack.config";
 
 test("Processes sass-loader's @import correctly", (done) => {
   const config = sassLoaderConfig({});
