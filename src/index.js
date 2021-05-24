@@ -1,6 +1,6 @@
-import loaderUtils from 'loader-utils';
+import loaderUtils from "loader-utils";
 
-import { getPool } from './workerPools';
+import { getPool } from "./workerPools";
 
 function pitch() {
   const options = loaderUtils.getOptions(this);
@@ -21,7 +21,7 @@ function pitch() {
           ident: l.ident,
         };
       }),
-      resource: this.resourcePath + (this.resourceQuery || ''),
+      resource: this.resourcePath + (this.resourceQuery || ""),
       sourceMap: this.sourceMap,
       emitError: this.emitError,
       emitWarning: this.emitWarning,

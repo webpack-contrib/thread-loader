@@ -1,6 +1,6 @@
-import os from 'os';
+import os from "os";
 
-import WorkerPool from './WorkerPool';
+import WorkerPool from "./WorkerPool";
 
 const workerPools = Object.create(null);
 
@@ -15,7 +15,7 @@ function calculateNumberOfWorkers() {
 
 function getPool(options) {
   const workerPoolOptions = {
-    name: options.name || '',
+    name: options.name || "",
     numberOfWorkers: options.workers || calculateNumberOfWorkers(),
     workerNodeArgs: options.workerNodeArgs,
     workerParallelJobs: options.workerParallelJobs || 20,

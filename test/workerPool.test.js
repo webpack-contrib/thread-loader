@@ -1,9 +1,9 @@
-import childProcess from 'child_process';
-import stream from 'stream';
+import childProcess from "child_process";
+import stream from "stream";
 
-import WorkerPool from '../src/WorkerPool';
+import WorkerPool from "../src/WorkerPool";
 
-jest.mock('child_process', () => {
+jest.mock("child_process", () => {
   return {
     spawn: jest.fn(() => {
       return {
@@ -13,16 +13,16 @@ jest.mock('child_process', () => {
   };
 });
 
-describe('workerPool', () => {
-  it('should throw an error when worker.stdio is undefined', () => {
+describe("workerPool", () => {
+  it("should throw an error when worker.stdio is undefined", () => {
     const workerPool = new WorkerPool({});
     expect(() => workerPool.createWorker()).toThrowErrorMatchingSnapshot();
     expect(() => workerPool.createWorker()).toThrowError(
-      'Please verify if you hit the OS open files limit'
+      "Please verify if you hit the OS open files limit"
     );
   });
 
-  it('should not throw an error when worker.stdio is defined', () => {
+  it("should not throw an error when worker.stdio is defined", () => {
     childProcess.spawn.mockImplementationOnce(() => {
       return {
         stdio: new Array(5).fill(new stream.PassThrough()),
@@ -34,18 +34,18 @@ describe('workerPool', () => {
     expect(() => workerPool.createWorker()).not.toThrow();
   });
 
-  it('should be able to run if the worker pool was not terminated', () => {
+  it("should be able to run if the worker pool was not terminated", () => {
     const workerPool = new WorkerPool({});
     expect(workerPool.isAbleToRun()).toBe(true);
   });
 
-  it('should not be able to run if the worker pool was terminated', () => {
+  it("should not be able to run if the worker pool was terminated", () => {
     const workerPool = new WorkerPool({});
     workerPool.terminate();
     expect(workerPool.isAbleToRun()).toBe(false);
   });
 
-  it('should sanitize nodeArgs when spawn a child process', () => {
+  it("should sanitize nodeArgs when spawn a child process", () => {
     childProcess.spawn.mockClear();
     childProcess.spawn.mockImplementationOnce(() => {
       return {
@@ -55,7 +55,7 @@ describe('workerPool', () => {
     });
 
     const workerPool = new WorkerPool({
-      workerNodeArgs: ['--max-old-space-size=1024', '', null],
+      workerNodeArgs: ["--max-old-space-size=1024", "", null],
       workerParallelJobs: 20,
     });
 

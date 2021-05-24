@@ -1,15 +1,15 @@
 /* eslint-disable no-console */
 
-import childProcess from 'child_process';
+import childProcess from "child_process";
 
-import asyncQueue from 'neo-async/queue';
-import asyncMapSeries from 'neo-async/mapSeries';
+import asyncQueue from "neo-async/queue";
+import asyncMapSeries from "neo-async/mapSeries";
 
-import readBuffer from './readBuffer';
-import WorkerError from './WorkerError';
-import { replacer, reviver } from './serializer';
+import readBuffer from "./readBuffer";
+import WorkerError from "./WorkerError";
+import { replacer, reviver } from "./serializer";
 
-const workerPath = require.resolve('./worker');
+const workerPath = require.resolve("./worker");
 
 let workerId = 0;
 
@@ -31,7 +31,7 @@ class PoolWorker {
       [].concat(sanitizedNodeArgs).concat(workerPath, options.parallelJobs),
       {
         detached: true,
-        stdio: ['ignore', 'pipe', 'pipe', 'pipe', 'pipe'],
+        stdio: ["ignore", "pipe", "pipe", "pipe", "pipe"],
       }
     );
 
@@ -42,7 +42,7 @@ class PoolWorker {
     // More info can be found on: https://github.com/webpack-contrib/thread-loader/issues/2
     if (!this.worker.stdio) {
       throw new Error(
-        `Failed to create the worker pool with workerId: ${workerId} and ${''}configuration: ${JSON.stringify(
+        `Failed to create the worker pool with workerId: ${workerId} and ${""}configuration: ${JSON.stringify(
           options
         )}. Please verify if you hit the OS open files limit.`
       );
@@ -57,21 +57,21 @@ class PoolWorker {
 
   listenStdOutAndErrFromWorker(workerStdout, workerStderr) {
     if (workerStdout) {
-      workerStdout.on('data', this.writeToStdout);
+      workerStdout.on("data", this.writeToStdout);
     }
 
     if (workerStderr) {
-      workerStderr.on('data', this.writeToStderr);
+      workerStderr.on("data", this.writeToStderr);
     }
   }
 
   ignoreStdOutAndErrFromWorker(workerStdout, workerStderr) {
     if (workerStdout) {
-      workerStdout.removeListener('data', this.writeToStdout);
+      workerStdout.removeListener("data", this.writeToStdout);
     }
 
     if (workerStderr) {
-      workerStderr.removeListener('data', this.writeToStderr);
+      workerStderr.removeListener("data", this.writeToStderr);
     }
   }
 
@@ -93,7 +93,7 @@ class PoolWorker {
     this.jobs[jobId] = { data, callback };
     this.activeJobs += 1;
     this.writeJson({
-      type: 'job',
+      type: "job",
       id: jobId,
       data,
     });
@@ -101,14 +101,14 @@ class PoolWorker {
 
   warmup(requires) {
     this.writeJson({
-      type: 'warmup',
+      type: "warmup",
       requires,
     });
   }
 
   writeJson(data) {
     const lengthBuffer = Buffer.alloc(4);
-    const messageBuffer = Buffer.from(JSON.stringify(data, replacer), 'utf-8');
+    const messageBuffer = Buffer.from(JSON.stringify(data, replacer), "utf-8");
     lengthBuffer.writeInt32BE(messageBuffer.length, 0);
     this.writePipe.write(lengthBuffer);
     this.writePipe.write(messageBuffer);
@@ -121,7 +121,7 @@ class PoolWorker {
   }
 
   readNextMessage() {
-    this.state = 'read length';
+    this.state = "read length";
     this.readBuffer(4, (lengthReadError, lengthBuffer) => {
       if (lengthReadError) {
         console.error(
@@ -129,10 +129,10 @@ class PoolWorker {
         );
         return;
       }
-      this.state = 'length read';
+      this.state = "length read";
       const length = lengthBuffer.readInt32BE(0);
 
-      this.state = 'read message';
+      this.state = "read message";
       this.readBuffer(length, (messageError, messageBuffer) => {
         if (messageError) {
           console.error(
@@ -140,10 +140,10 @@ class PoolWorker {
           );
           return;
         }
-        this.state = 'message read';
-        const messageString = messageBuffer.toString('utf-8');
+        this.state = "message read";
+        const messageString = messageBuffer.toString("utf-8");
         const message = JSON.parse(messageString, reviver);
-        this.state = 'process message';
+        this.state = "process message";
         this.onWorkerMessage(message, (err) => {
           if (err) {
             console.error(
@@ -151,7 +151,7 @@ class PoolWorker {
             );
             return;
           }
-          this.state = 'soon next';
+          this.state = "soon next";
           setImmediate(() => this.readNextMessage());
         });
       });
@@ -161,7 +161,7 @@ class PoolWorker {
   onWorkerMessage(message, finalCallback) {
     const { type, id } = message;
     switch (type) {
-      case 'job': {
+      case "job": {
         const { data, error, result } = message;
         asyncMapSeries(
           data,
@@ -192,7 +192,7 @@ class PoolWorker {
                   const buffer = buffers[bufferPosition];
                   bufferPosition += 1;
                   if (r.string) {
-                    return buffer.toString('utf-8');
+                    return buffer.toString("utf-8");
                   }
                   return buffer;
                 }
@@ -208,13 +208,13 @@ class PoolWorker {
         );
         break;
       }
-      case 'loadModule': {
+      case "loadModule": {
         const { request, questionId } = message;
         const { data } = this.jobs[id];
         // eslint-disable-next-line no-unused-vars
         data.loadModule(request, (error, source, sourceMap, module) => {
           this.writeJson({
-            type: 'result',
+            type: "result",
             id: questionId,
             error: error
               ? {
@@ -234,13 +234,13 @@ class PoolWorker {
         finalCallback();
         break;
       }
-      case 'resolve': {
+      case "resolve": {
         const { context, request, options, questionId } = message;
         const { data } = this.jobs[id];
         if (options) {
           data.getResolve(options)(context, request, (error, result) => {
             this.writeJson({
-              type: 'result',
+              type: "result",
               id: questionId,
               error: error
                 ? {
@@ -255,7 +255,7 @@ class PoolWorker {
         } else {
           data.resolve(context, request, (error, result) => {
             this.writeJson({
-              type: 'result',
+              type: "result",
               id: questionId,
               error: error
                 ? {
@@ -271,14 +271,14 @@ class PoolWorker {
         finalCallback();
         break;
       }
-      case 'emitWarning': {
+      case "emitWarning": {
         const { data } = message;
         const { data: jobData } = this.jobs[id];
         jobData.emitWarning(this.fromErrorObj(data));
         finalCallback();
         break;
       }
-      case 'emitError': {
+      case "emitError": {
         const { data } = message;
         const { data: jobData } = this.jobs[id];
         jobData.emitError(this.fromErrorObj(data));
@@ -295,7 +295,7 @@ class PoolWorker {
 
   fromErrorObj(arg) {
     let obj;
-    if (typeof arg === 'string') {
+    if (typeof arg === "string") {
       obj = { message: arg };
     } else {
       obj = arg;
@@ -350,7 +350,7 @@ export default class WorkerPool {
   }
 
   setupLifeCycle() {
-    process.on('exit', () => {
+    process.on("exit", () => {
       this.terminate();
     });
   }

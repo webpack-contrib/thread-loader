@@ -24,7 +24,7 @@ export default function readBuffer(pipe, length, callback) {
       buffers.push(chunk);
 
       if (remainingLength === 0) {
-        pipe.removeListener('data', onChunk);
+        pipe.removeListener("data", onChunk);
         pipe.pause();
 
         if (overflow) {
@@ -35,7 +35,7 @@ export default function readBuffer(pipe, length, callback) {
       }
     };
 
-    pipe.on('data', onChunk);
+    pipe.on("data", onChunk);
     pipe.resume();
   };
   readChunk();

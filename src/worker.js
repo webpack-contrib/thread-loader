@@ -1,27 +1,27 @@
 /* eslint-disable no-console */
-import fs from 'fs';
-import NativeModule from 'module';
+import fs from "fs";
+import NativeModule from "module";
 
-import querystring from 'querystring';
+import querystring from "querystring";
 
-import loaderRunner from 'loader-runner';
-import asyncQueue from 'neo-async/queue';
-import parseJson from 'json-parse-better-errors';
-import { validate } from 'schema-utils';
+import loaderRunner from "loader-runner";
+import asyncQueue from "neo-async/queue";
+import parseJson from "json-parse-better-errors";
+import { validate } from "schema-utils";
 
-import readBuffer from './readBuffer';
-import { replacer, reviver } from './serializer';
+import readBuffer from "./readBuffer";
+import { replacer, reviver } from "./serializer";
 
 const writePipe = fs.createWriteStream(null, { fd: 3 });
 const readPipe = fs.createReadStream(null, { fd: 4 });
 
-writePipe.on('finish', onTerminateWrite);
-readPipe.on('end', onTerminateRead);
-writePipe.on('close', onTerminateWrite);
-readPipe.on('close', onTerminateRead);
+writePipe.on("finish", onTerminateWrite);
+readPipe.on("end", onTerminateRead);
+writePipe.on("close", onTerminateWrite);
+readPipe.on("close", onTerminateRead);
 
-readPipe.on('error', onError);
-writePipe.on('error', onError);
+readPipe.on("error", onError);
+writePipe.on("error", onError);
 
 const PARALLEL_JOBS = +process.argv[2] || 20;
 
@@ -98,7 +98,7 @@ function writeJson(data) {
   });
 
   const lengthBuffer = Buffer.alloc(4);
-  const messageBuffer = Buffer.from(JSON.stringify(data, replacer), 'utf-8');
+  const messageBuffer = Buffer.from(JSON.stringify(data, replacer), "utf-8");
   lengthBuffer.writeInt32BE(messageBuffer.length, 0);
 
   writePipeWrite(lengthBuffer);
@@ -110,7 +110,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
     const resolveWithOptions = (context, request, callback, options) => {
       callbackMap[nextQuestionId] = callback;
       writeJson({
-        type: 'resolve',
+        type: "resolve",
         id,
         questionId: nextQuestionId,
         context,
@@ -134,7 +134,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
             callbackMap[nextQuestionId] = (error, result) =>
               callback(error, ...result);
             writeJson({
-              type: 'loadModule',
+              type: "loadModule",
               id,
               questionId: nextQuestionId,
               request,
@@ -177,15 +177,15 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
 
             let { options } = loader;
 
-            if (typeof options === 'string') {
-              if (options.substr(0, 1) === '{' && options.substr(-1) === '}') {
+            if (typeof options === "string") {
+              if (options.substr(0, 1) === "{" && options.substr(-1) === "}") {
                 try {
                   options = parseJson(options);
                 } catch (e) {
                   throw new Error(`Cannot parse string options: ${e.message}`);
                 }
               } else {
-                options = querystring.parse(options, '&', '=', {
+                options = querystring.parse(options, "&", "=", {
                   maxKeys: 0,
                 });
               }
@@ -197,8 +197,8 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
             }
 
             if (schema) {
-              let name = 'Loader';
-              let baseDataPath = 'options';
+              let name = "Loader";
+              let baseDataPath = "options";
               let match;
               // eslint-disable-next-line no-cond-assign
               if (schema.title && (match = /^(.+) (.+)$/.exec(schema.title))) {
@@ -214,14 +214,14 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
           },
           emitWarning: (warning) => {
             writeJson({
-              type: 'emitWarning',
+              type: "emitWarning",
               id,
               data: toErrorObj(warning),
             });
           },
           emitError: (error) => {
             writeJson({
-              type: 'emitError',
+              type: "emitError",
               id,
               data: toErrorObj(error),
             });
@@ -240,7 +240,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
             context: data.optionsContext,
           },
           webpack: true,
-          'thread-loader': true,
+          "thread-loader": true,
           sourceMap: data.sourceMap,
           target: data.target,
           minimize: data.minimize,
@@ -267,8 +267,8 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
                 buffer: true,
               };
             }
-            if (typeof item === 'string') {
-              const stringBuffer = Buffer.from(item, 'utf-8');
+            if (typeof item === "string") {
+              const stringBuffer = Buffer.from(item, "utf-8");
               buffersToSend.push(stringBuffer);
               return {
                 buffer: true,
@@ -280,7 +280,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
             };
           });
         writeJson({
-          type: 'job',
+          type: "job",
           id,
           error: err && toErrorObj(err),
           result: {
@@ -301,7 +301,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
     );
   } catch (e) {
     writeJson({
-      type: 'job',
+      type: "job",
       id,
       error: toErrorObj(e),
     });
@@ -320,11 +320,11 @@ function onMessage(message) {
   try {
     const { type, id } = message;
     switch (type) {
-      case 'job': {
+      case "job": {
         queue.push(message);
         break;
       }
-      case 'result': {
+      case "result": {
         const { error, result } = message;
         const callback = callbackMap[id];
         if (callback) {
@@ -336,7 +336,7 @@ function onMessage(message) {
         delete callbackMap[id];
         break;
       }
-      case 'warmup': {
+      case "warmup": {
         const { requires } = message;
         // load modules into process
         requires.forEach((r) => require(r)); // eslint-disable-line import/no-dynamic-require, global-require
@@ -379,7 +379,7 @@ function readNextMessage() {
         );
         return;
       }
-      const messageString = messageBuffer.toString('utf-8');
+      const messageString = messageBuffer.toString("utf-8");
       const message = JSON.parse(messageString, reviver);
 
       onMessage(message);

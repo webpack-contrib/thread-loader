@@ -1,8 +1,8 @@
-const path = require('path');
+const path = require("path");
 
-const MiniCssExtractPlugin = require('mini-css-extract-plugin'); // eslint-disable-line import/no-extraneous-dependencies
+const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // eslint-disable-line import/no-extraneous-dependencies
 
-const threadLoader = require('../../src'); // eslint-disable-line import/no-extraneous-dependencies
+const threadLoader = require("../../src"); // eslint-disable-line import/no-extraneous-dependencies
 
 module.exports = (env) => {
   const workerPool = {
@@ -17,24 +17,24 @@ module.exports = (env) => {
   const sassLoaderOptions = {
     sourceMap: true,
     sassOptions: {
-      includePaths: [path.resolve(__dirname, 'assets')],
+      includePaths: [path.resolve(__dirname, "assets")],
     },
   };
   if (+env.threads > 0) {
-    threadLoader.warmup(workerPool, ['babel-loader', 'babel-preset-env']);
+    threadLoader.warmup(workerPool, ["babel-loader", "babel-preset-env"]);
     threadLoader.warmup(workerPoolSass, [
-      'sass-loader',
-      'postcss-loader',
-      'css-loader',
+      "sass-loader",
+      "postcss-loader",
+      "css-loader",
     ]);
   }
   return {
-    mode: 'none',
+    mode: "none",
     context: __dirname,
-    entry: ['./index.js'],
+    entry: ["./index.js"],
     output: {
-      path: path.resolve('dist'),
-      filename: 'bundle.js',
+      path: path.resolve("dist"),
+      filename: "bundle.js",
     },
     module: {
       rules: [
@@ -42,10 +42,10 @@ module.exports = (env) => {
           test: /\.js$/,
           use: [
             env.threads !== 0 && {
-              loader: path.resolve(__dirname, '../../dist/index.js'),
+              loader: path.resolve(__dirname, "../../dist/index.js"),
               options: workerPool,
             },
-            'babel-loader',
+            "babel-loader",
           ].filter(Boolean),
         },
         {
@@ -53,26 +53,26 @@ module.exports = (env) => {
           use: [
             MiniCssExtractPlugin.loader,
             env.threads !== 0 && {
-              loader: path.resolve(__dirname, '../../dist/index.js'),
+              loader: path.resolve(__dirname, "../../dist/index.js"),
               options: workerPoolSass,
             },
-            'css-loader',
+            "css-loader",
             {
-              loader: 'postcss-loader',
+              loader: "postcss-loader",
               options: {
                 postcssOptions: {
-                  config: path.resolve(__dirname, './postcss.config.js'),
+                  config: path.resolve(__dirname, "./postcss.config.js"),
                 },
               },
             },
-            { loader: 'sass-loader', options: sassLoaderOptions },
+            { loader: "sass-loader", options: sassLoaderOptions },
           ].filter(Boolean),
         },
       ],
     },
     plugins: [
       new MiniCssExtractPlugin({
-        filename: 'style.css',
+        filename: "style.css",
       }),
     ],
     stats: {

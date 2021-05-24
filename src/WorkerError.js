@@ -1,21 +1,21 @@
 const stack = (err, worker, workerId) => {
-  const originError = (err.stack || '')
-    .split('\n')
-    .filter((line) => line.trim().startsWith('at'));
+  const originError = (err.stack || "")
+    .split("\n")
+    .filter((line) => line.trim().startsWith("at"));
 
   const workerError = worker
-    .split('\n')
-    .filter((line) => line.trim().startsWith('at'));
+    .split("\n")
+    .filter((line) => line.trim().startsWith("at"));
 
   const diff = workerError
     .slice(0, workerError.length - originError.length)
-    .join('\n');
+    .join("\n");
 
   originError.unshift(diff);
   originError.unshift(err.message);
   originError.unshift(`Thread Loader (Worker ${workerId})`);
 
-  return originError.join('\n');
+  return originError.join("\n");
 };
 
 class WorkerError extends Error {

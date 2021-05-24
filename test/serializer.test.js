@@ -1,22 +1,22 @@
-const { replacer, reviver } = require('../src/serializer');
+const { replacer, reviver } = require("../src/serializer");
 
-test('round-trips plain objects', () => {
+test("round-trips plain objects", () => {
   const json = JSON.stringify(
     {
       a: 1,
-      b: 'foo',
+      b: "foo",
       c: [null, false],
     },
     replacer
   );
   expect(JSON.parse(json, reviver)).toEqual({
     a: 1,
-    b: 'foo',
+    b: "foo",
     c: [null, false],
   });
 });
 
-test('round-trips regular expressions', () => {
+test("round-trips regular expressions", () => {
   const json = JSON.stringify(
     {
       r: /hoge/g,
