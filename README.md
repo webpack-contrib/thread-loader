@@ -40,62 +40,62 @@ Use this loader only for expensive operations!
 
 ```js
 module.exports = {
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        include: path.resolve('src'),
-        use: [
-          'thread-loader',
-          // your expensive loader (e.g babel-loader)
-        ],
-      },
-    ],
-  },
-};
+	module: {
+		rules: [
+			{
+				test: /\.js$/,
+				include: path.resolve('src'),
+				use: [
+					'thread-loader'
+					// your expensive loader (e.g babel-loader)
+				]
+			}
+		]
+	}
+}
 ```
 
 **with options**
 
 ```js
 use: [
-  {
-    loader: 'thread-loader',
-    // loaders with equal options will share worker pools
-    options: {
-      // the number of spawned workers, defaults to (number of cpus - 1) or
-      // fallback to 1 when require('os').cpus() is undefined
-      workers: 2,
+	{
+		loader: 'thread-loader',
+		// loaders with equal options will share worker pools
+		options: {
+			// the number of spawned workers, defaults to (number of cpus - 1) or
+			// fallback to 1 when require('os').cpus() is undefined
+			workers: 2,
 
-      // number of jobs a worker processes in parallel
-      // defaults to 20
-      workerParallelJobs: 50,
+			// number of jobs a worker processes in parallel
+			// defaults to 20
+			workerParallelJobs: 50,
 
-      // additional node.js arguments
-      workerNodeArgs: ['--max-old-space-size=1024'],
+			// additional node.js arguments
+			workerNodeArgs: ['--max-old-space-size=1024'],
 
-      // Allow to respawn a dead worker pool
-      // respawning slows down the entire compilation
-      // and should be set to false for development
-      poolRespawn: false,
+			// Allow to respawn a dead worker pool
+			// respawning slows down the entire compilation
+			// and should be set to false for development
+			poolRespawn: false,
 
-      // timeout for killing the worker processes when idle
-      // defaults to 500 (ms)
-      // can be set to Infinity for watching builds to keep workers alive
-      poolTimeout: 2000,
+			// timeout for killing the worker processes when idle
+			// defaults to 500 (ms)
+			// can be set to Infinity for watching builds to keep workers alive
+			poolTimeout: 2000,
 
-      // number of jobs the poll distributes to the workers
-      // defaults to 200
-      // decrease of less efficient but more fair distribution
-      poolParallelJobs: 50,
+			// number of jobs the poll distributes to the workers
+			// defaults to 200
+			// decrease of less efficient but more fair distribution
+			poolParallelJobs: 50,
 
-      // name of the pool
-      // can be used to create different pools with elsewise identical options
-      name: 'my-pool',
-    },
-  },
-  // your expensive loader (e.g babel-loader)
-];
+			// name of the pool
+			// can be used to create different pools with elsewise identical options
+			name: 'my-pool'
+		}
+	}
+	// your expensive loader (e.g babel-loader)
+]
 ```
 
 **prewarming**
@@ -105,21 +105,21 @@ To prevent the high delay when booting workers it possible to warmup the worker 
 This boots the max number of workers in the pool and loads specified modules into the node.js module cache.
 
 ```js
-const threadLoader = require('thread-loader');
+const threadLoader = require('thread-loader')
 
 threadLoader.warmup(
-  {
-    // pool options, like passed to loader options
-    // must match loader options to boot the correct pool
-  },
-  [
-    // modules to load
-    // can be any module, i. e.
-    'babel-loader',
-    'babel-preset-es2015',
-    'sass-loader',
-  ]
-);
+	{
+		// pool options, like passed to loader options
+		// must match loader options to boot the correct pool
+	},
+	[
+		// modules to load
+		// can be any module, i. e.
+		'babel-loader',
+		'babel-preset-es2015',
+		'sass-loader'
+	]
+)
 ```
 
 ## Contributing

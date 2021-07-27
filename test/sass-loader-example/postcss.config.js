@@ -1,3 +1,3 @@
 module.exports = {
-  plugins: ['postcss-font-magician'],
-};
+	plugins: ['postcss-font-magician']
+}

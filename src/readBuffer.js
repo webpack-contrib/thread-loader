@@ -1,42 +1,42 @@
 export default function readBuffer(pipe, length, callback) {
-  if (length === 0) {
-    callback(null, Buffer.alloc(0));
-    return;
-  }
+	if (length === 0) {
+		callback(null, Buffer.alloc(0))
+		return
+	}
 
-  let remainingLength = length;
+	let remainingLength = length
 
-  const buffers = [];
+	const buffers = []
 
-  const readChunk = () => {
-    const onChunk = (arg) => {
-      let chunk = arg;
-      let overflow;
+	const readChunk = () => {
+		const onChunk = arg => {
+			let chunk = arg
+			let overflow
 
-      if (chunk.length > remainingLength) {
-        overflow = chunk.slice(remainingLength);
-        chunk = chunk.slice(0, remainingLength);
-        remainingLength = 0;
-      } else {
-        remainingLength -= chunk.length;
-      }
+			if (chunk.length > remainingLength) {
+				overflow = chunk.slice(remainingLength)
+				chunk = chunk.slice(0, remainingLength)
+				remainingLength = 0
+			} else {
+				remainingLength -= chunk.length
+			}
 
-      buffers.push(chunk);
+			buffers.push(chunk)
 
-      if (remainingLength === 0) {
-        pipe.removeListener('data', onChunk);
-        pipe.pause();
+			if (remainingLength === 0) {
+				pipe.removeListener('data', onChunk)
+				pipe.pause()
 
-        if (overflow) {
-          pipe.unshift(overflow);
-        }
+				if (overflow) {
+					pipe.unshift(overflow)
+				}
 
-        callback(null, Buffer.concat(buffers, length));
-      }
-    };
+				callback(null, Buffer.concat(buffers, length))
+			}
+		}
 
-    pipe.on('data', onChunk);
-    pipe.resume();
-  };
-  readChunk();
+		pipe.on('data', onChunk)
+		pipe.resume()
+	}
+	readChunk()
 }

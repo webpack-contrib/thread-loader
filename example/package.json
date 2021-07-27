@@ -1,9 +1,9 @@
 {
-  "dependencies": {
-    "lodash-es": "^4.17.14",
-    "react": "^16.6.3"
-  },
-  "devDependencies": {
-    "babel-loader": "^8.1.0"
-  }
+	"dependencies": {
+		"lodash-es": "^4.17.14",
+		"react": "^16.6.3"
+	},
+	"devDependencies": {
+		"babel-loader": "^8.1.0"
+	}
 }
