@@ -139,9 +139,9 @@ module. Thankfully, Github provides a means to do this. Add a dependency to the
 
 ```json
 {
-  "devDependencies": {
-    "thread-loader": "webpack-contrib/thread-loader#{id}/head"
-  }
+	"devDependencies": {
+		"thread-loader": "webpack-contrib/thread-loader#{id}/head"
+	}
 }
 ```
 

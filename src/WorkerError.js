@@ -1,33 +1,33 @@
 const stack = (err, worker, workerId) => {
-  const originError = (err.stack || '')
-    .split('\n')
-    .filter((line) => line.trim().startsWith('at'));
+	const originError = (err.stack || '')
+		.split('\n')
+		.filter(line => line.trim().startsWith('at'))
 
-  const workerError = worker
-    .split('\n')
-    .filter((line) => line.trim().startsWith('at'));
+	const workerError = worker
+		.split('\n')
+		.filter(line => line.trim().startsWith('at'))
 
-  const diff = workerError
-    .slice(0, workerError.length - originError.length)
-    .join('\n');
+	const diff = workerError
+		.slice(0, workerError.length - originError.length)
+		.join('\n')
 
-  originError.unshift(diff);
-  originError.unshift(err.message);
-  originError.unshift(`Thread Loader (Worker ${workerId})`);
+	originError.unshift(diff)
+	originError.unshift(err.message)
+	originError.unshift(`Thread Loader (Worker ${workerId})`)
 
-  return originError.join('\n');
-};
-
-class WorkerError extends Error {
-  constructor(err, workerId) {
-    super(err);
-    this.name = err.name;
-    this.message = err.message;
-
-    Error.captureStackTrace(this, this.constructor);
-
-    this.stack = stack(err, this.stack, workerId);
-  }
+	return originError.join('\n')
 }
 
-export default WorkerError;
+class WorkerError extends Error {
+	constructor(err, workerId) {
+		super(err)
+		this.name = err.name
+		this.message = err.message
+
+		Error.captureStackTrace(this, this.constructor)
+
+		this.stack = stack(err, this.stack, workerId)
+	}
+}
+
+export default WorkerError
