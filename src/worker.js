@@ -212,6 +212,25 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
 
             return options;
           },
+          getLogger: (name) => {
+            return {
+              error(message) {
+                console.error(`${name}: ${message}`);
+              },
+
+              warn(message) {
+                console.warn(`${name}: ${message}`);
+              },
+
+              log(message) {
+                console.log(`${name}: ${message}`);
+              },
+
+              debug(message) {
+                console.debug(`${name}: ${message}`);
+              },
+            };
+          },
           emitWarning: (warning) => {
             writeJson({
               type: 'emitWarning',
