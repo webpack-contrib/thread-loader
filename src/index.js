@@ -25,6 +25,8 @@ function pitch() {
       sourceMap: this.sourceMap,
       emitError: this.emitError,
       emitWarning: this.emitWarning,
+      getLogger: this.getLogger,
+      loggers: {},
       loadModule: this.loadModule,
       resolve: this.resolve,
       getResolve: this.getResolve,
