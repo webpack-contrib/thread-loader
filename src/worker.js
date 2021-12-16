@@ -212,6 +212,37 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
 
             return options;
           },
+          getLogger: (name) => {
+            function writeLoggerJson(severity, message) {
+              writeJson({
+                type: 'logger',
+                id,
+                data: { severity, name, message },
+              });
+            }
+            writeJson({
+              type: 'getLogger',
+              id,
+              data: { name },
+            });
+            return {
+              error(message) {
+                writeLoggerJson('error', message);
+              },
+
+              warn(message) {
+                writeLoggerJson('warn', message);
+              },
+
+              log(message) {
+                writeLoggerJson('log', message);
+              },
+
+              debug(message) {
+                writeLoggerJson('debug', message);
+              },
+            };
+          },
           emitWarning: (warning) => {
             writeJson({
               type: 'emitWarning',
