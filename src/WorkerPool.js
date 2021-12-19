@@ -21,6 +21,7 @@ class PoolWorker {
     this.activeJobs = 0;
     this.onJobDone = onJobDone;
     this.id = workerId;
+    this.allowedFunctions = options.allowedFunctions;
 
     workerId += 1;
     // Empty or invalid node args would break the child process
@@ -106,9 +107,29 @@ class PoolWorker {
     });
   }
 
+  getReplacer() {
+    return (key, value) => {
+      if (
+        value instanceof Function &&
+        Array.isArray(this.allowedFunctions) &&
+        this.allowedFunctions.includes(value.name)
+      ) {
+        return {
+          __serialized_type: 'Function',
+          fnBody: value.toString(),
+          args: new Array(value.length).fill('a').map((i, dx) => `${i}${dx}`),
+        };
+      }
+      return replacer(key, value);
+    };
+  }
+
   writeJson(data) {
     const lengthBuffer = Buffer.alloc(4);
-    const messageBuffer = Buffer.from(JSON.stringify(data, replacer), 'utf-8');
+    const messageBuffer = Buffer.from(
+      JSON.stringify(data, this.getReplacer()),
+      'utf-8'
+    );
     lengthBuffer.writeInt32BE(messageBuffer.length, 0);
     this.writePipe.write(lengthBuffer);
     this.writePipe.write(messageBuffer);
@@ -323,6 +344,7 @@ export default class WorkerPool {
     this.poolTimeout = options.poolTimeout;
     this.workerNodeArgs = options.workerNodeArgs;
     this.workerParallelJobs = options.workerParallelJobs;
+    this.workerAllowedFunctions = options.workerAllowedFunctions;
     this.workers = new Set();
     this.activeJobs = 0;
     this.timeout = null;
@@ -389,6 +411,7 @@ export default class WorkerPool {
       {
         nodeArgs: this.workerNodeArgs,
         parallelJobs: this.workerParallelJobs,
+        allowedFunctions: this.workerAllowedFunctions,
       },
       () => this.onJobDone()
     );
