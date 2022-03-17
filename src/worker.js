@@ -178,7 +178,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
             let { options } = loader;
 
             if (typeof options === 'string') {
-              if (options.substr(0, 1) === '{' && options.substr(-1) === '}') {
+              if (options.startsWith('{') && options.endsWith('}')) {
                 try {
                   options = parseJson(options);
                 } catch (e) {
