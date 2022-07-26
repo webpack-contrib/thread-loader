@@ -64,3 +64,8 @@ function warmup(options, requires) {
 }
 
 export { pitch, warmup }; // eslint-disable-line import/prefer-default-export
+
+export default {
+  pitch,
+  warmup,
+};
