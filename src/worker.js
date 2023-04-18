@@ -246,6 +246,11 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
           minimize: data.minimize,
           resourceQuery: data.resourceQuery,
           rootContext: data.rootContext,
+          // eslint-disable-next-line no-underscore-dangle
+          _compilation: data._compilation,
+          // eslint-disable-next-line no-underscore-dangle
+          _compiler: data._compiler,
+          resourcePath: data.resourcePath,
         },
       },
       (err, lrResult) => {

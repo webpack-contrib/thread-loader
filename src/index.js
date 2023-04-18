@@ -1,9 +1,7 @@
-import loaderUtils from 'loader-utils';
-
 import { getPool } from './workerPools';
 
 function pitch() {
-  const options = loaderUtils.getOptions(this);
+  const options = this.getOptions();
   const workerPool = getPool(options);
 
   if (!workerPool.isAbleToRun()) {
@@ -21,6 +19,12 @@ function pitch() {
           ident: l.ident,
         };
       }),
+      _compiler: { fsStartTime: this._compiler.fsStartTime },
+      _compilation: {
+        outputOptions: this._compilation.outputOptions,
+        options: this._compilation.options,
+      },
+      resourcePath: this.resourcePath,
       resource: this.resourcePath + (this.resourceQuery || ''),
       sourceMap: this.sourceMap,
       emitError: this.emitError,
