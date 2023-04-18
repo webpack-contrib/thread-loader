@@ -1,9 +1,7 @@
-import loaderUtils from 'loader-utils';
-
 import { getPool } from './workerPools';
 
 function pitch() {
-  const options = loaderUtils.getOptions(this);
+  const options = this.getOptions();
   const workerPool = getPool(options);
 
   if (!workerPool.isAbleToRun()) {
