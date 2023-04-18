@@ -13,7 +13,7 @@
   },
   "main": "dist/cjs.js",
   "engines": {
-    "node": ">= 16.0.0"
+    "node": ">= 16.10.0"
   },
   "scripts": {
     "start": "npm run build -- -w",
