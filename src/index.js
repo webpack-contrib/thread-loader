@@ -21,8 +21,18 @@ function pitch() {
       }),
       _compiler: { fsStartTime: this._compiler.fsStartTime },
       _compilation: {
-        outputOptions: this._compilation.outputOptions,
-        options: this._compilation.options,
+        outputOptions: {
+          hashSalt: this._compilation.outputOptions.hashSalt,
+          hashFunction: this._compilation.outputOptions.hashFunction,
+          hashDigest: this._compilation.outputOptions.hashDigest,
+          hashDigestLength: this._compilation.outputOptions.hashDigestLength,
+        },
+        options: {
+          devtool:
+            this._compilation &&
+            this._compilation.options &&
+            this._compilation.options.devtool,
+        },
       },
       resourcePath: this.resourcePath,
       resource: this.resourcePath + (this.resourceQuery || ''),
