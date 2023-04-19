@@ -31,6 +31,7 @@ module.exports = (env) => {
   return {
     mode: 'none',
     context: __dirname,
+    devtool: false,
     entry: ['./index.js'],
     output: {
       path: path.resolve('dist'),
