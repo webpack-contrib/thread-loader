@@ -27,7 +27,12 @@ function pitch() {
           hashDigest: this._compilation.outputOptions.hashDigest,
           hashDigestLength: this._compilation.outputOptions.hashDigestLength,
         },
-        options: this._compilation.options,
+        options: {
+          devtool:
+            this._compilation &&
+            this._compilation.options &&
+            this._compilation.options.devtool,
+        },
       },
       resourcePath: this.resourcePath,
       resource: this.resourcePath + (this.resourceQuery || ''),
