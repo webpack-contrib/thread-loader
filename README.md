@@ -25,7 +25,7 @@ npm install --save-dev thread-loader
 or
 
 ```bash
-yarn add -D css-loader
+yarn add -D thread-loader
 ```
 
 or
