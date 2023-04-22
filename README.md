@@ -22,6 +22,18 @@ Runs the following loaders in a worker pool.
 npm install --save-dev thread-loader
 ```
 
+or
+
+```bash
+yarn add -D css-loader
+```
+
+or
+
+```bash
+pnpm add -D css-loader
+```
+
 Put this loader in front of other loaders. The following loaders run in a worker pool.
 
 Loaders running in a worker pool are limited. Examples:
