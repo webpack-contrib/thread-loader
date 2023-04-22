@@ -31,7 +31,7 @@ yarn add -D thread-loader
 or
 
 ```bash
-pnpm add -D css-loader
+pnpm add -D thread-loader
 ```
 
 Put this loader in front of other loaders. The following loaders run in a worker pool.
