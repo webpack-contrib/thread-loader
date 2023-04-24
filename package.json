@@ -24,6 +24,7 @@
     "security": "npm audit",
     "lint:prettier": "prettier \"{**/*,*}.{js,json,md,yml,css,ts}\" --list-different",
     "lint:js": "eslint --cache .",
+    "lint:spelling": "cspell \"**/*.*\"",
     "lint": "npm-run-all -l -p \"lint:**\"",
     "test:only": "cross-env NODE_ENV=test jest --forceExit",
     "test:watch": "npm run test:only -- --watch",
@@ -40,6 +41,7 @@
     "webpack": "^5.0.0"
   },
   "dependencies": {
+    "cspell": "^6.31.1",
     "json-parse-better-errors": "^1.0.2",
     "loader-runner": "^4.1.0",
     "neo-async": "^2.6.2",
