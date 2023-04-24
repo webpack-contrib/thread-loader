@@ -28,6 +28,9 @@
     "**/__snapshots__/**",
     "package-lock.json",
     "**/*.css",
-    "**/fonts/**"
+    "**/fonts/**",
+    "node_modules",
+    "coverage",
+    "*.log"
   ]
 }
