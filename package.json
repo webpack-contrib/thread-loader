@@ -48,9 +48,9 @@
     "schema-utils": "^4.0.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.20.7",
-    "@babel/core": "^7.20.12",
-    "@babel/preset-env": "^7.20.2",
+    "@babel/cli": "^7.21.5",
+    "@babel/core": "^7.21.5",
+    "@babel/preset-env": "^7.21.5",
     "@commitlint/cli": "^17.6.1",
     "@commitlint/config-conventional": "^17.6.1",
     "@webpack-contrib/eslint-config-webpack": "^3.0.0",
@@ -74,11 +74,11 @@
     "postcss": "^8.4.23",
     "postcss-font-magician": "^3.0.0",
     "postcss-loader": "^5.2.0",
-    "prettier": "^2.1.2",
-    "sass": "^1.27.0",
+    "prettier": "^2.8.8",
+    "sass": "^1.62.1",
     "sass-loader": "^11.0.1",
     "standard-version": "^9.0.0",
-    "webpack": "^5.80.0"
+    "webpack": "^5.81.0"
   },
   "keywords": [
     "webpack"
