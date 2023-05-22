@@ -19,7 +19,10 @@ function pitch() {
           ident: l.ident,
         };
       }),
-      _compiler: { fsStartTime: this._compiler.fsStartTime },
+      _compiler: {
+        fsStartTime: this._compiler.fsStartTime,
+        options: { plugins: [] },
+      },
       _compilation: {
         outputOptions: {
           hashSalt: this._compilation.outputOptions.hashSalt,
