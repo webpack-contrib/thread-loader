@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.0.2](https://github.com/webpack-contrib/thread-loader/compare/v4.0.1...v4.0.2) (2023-05-22)
+
+
+### Bug Fixes
+
+* compatibility with ts-loader ([#183](https://github.com/webpack-contrib/thread-loader/issues/183)) ([cbc9722](https://github.com/webpack-contrib/thread-loader/commit/cbc97221ca9f625b0b7d53d2570fb2c34d663c3b))
+
 ### [4.0.1](https://github.com/webpack-contrib/thread-loader/compare/v4.0.0...v4.0.1) (2023-04-19)
 
 
