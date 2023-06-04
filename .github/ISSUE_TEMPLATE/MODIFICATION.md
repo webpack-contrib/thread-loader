@@ -11,7 +11,7 @@ about: Would you like something work differently? Have an alternative approach? 
   while making animal noises.
 
   👉🏽 Need support, advice, or help? Don't open an issue!
-  Head to StackOverflow or https://gitter.im/webpack/webpack.
+  Head to StackOverflow.
 -->
 
 - Operating System:
