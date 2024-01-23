@@ -130,6 +130,55 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
         context: {
           version: 2,
           fs,
+          getLogger: (name) => {
+            writeJson({
+              type: 'getLogger',
+              id,
+              data: name,
+            });
+            return {
+              warn: (warningMessage) => {
+                writeJson({
+                  type: 'emitLoggingWarning',
+                  id,
+                  data: {
+                    message: warningMessage,
+                    name,
+                  },
+                });
+              },
+              log: (logMesssage) => {
+                writeJson({
+                  type: 'emitLoggingLog',
+                  id,
+                  data: {
+                    message: logMesssage,
+                    name,
+                  },
+                });
+              },
+              debug: (debugMesssage) => {
+                writeJson({
+                  type: 'emitLoggingDebug',
+                  id,
+                  data: {
+                    message: debugMesssage,
+                    name,
+                  },
+                });
+              },
+              error: (errorMesssage) => {
+                writeJson({
+                  type: 'emitLoggingError',
+                  id,
+                  data: {
+                    message: errorMesssage,
+                    name,
+                  },
+                });
+              },
+            };
+          },
           loadModule: (request, callback) => {
             callbackMap[nextQuestionId] = (error, result) =>
               callback(error, ...result);
