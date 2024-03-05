@@ -50,6 +50,7 @@ function pitch() {
       resourceQuery: this.resourceQuery,
       optionsContext: this.rootContext || this.options.context,
       rootContext: this.rootContext,
+      getLogger: this.getLogger,
     },
     (err, r) => {
       if (r) {

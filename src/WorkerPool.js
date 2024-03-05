@@ -21,6 +21,7 @@ class PoolWorker {
     this.activeJobs = 0;
     this.onJobDone = onJobDone;
     this.id = workerId;
+    this.logger = Object.create(null);
 
     workerId += 1;
     // Empty or invalid node args would break the child process
@@ -268,6 +269,63 @@ class PoolWorker {
             });
           });
         }
+        finalCallback();
+        break;
+      }
+      case 'getLogger': {
+        const { data: name } = message;
+        const { data: jobData } = this.jobs[id];
+        if (!this.logger[name]) {
+          this.logger[name] = jobData.getLogger(name);
+        }
+        finalCallback();
+        break;
+      }
+      case 'emitLoggingWarning': {
+        const {
+          data: { message: warningMessage, name },
+        } = message;
+        const { data: jobData } = this.jobs[id];
+        if (!this.logger[name]) {
+          this.logger[name] = jobData.getLogger(name);
+        }
+        this.logger[name].warn(warningMessage);
+        finalCallback();
+        break;
+      }
+      case 'emitLoggingError': {
+        const {
+          data: { message: errorMessage, name },
+        } = message;
+        const { data: jobData } = this.jobs[id];
+        if (!this.logger[name]) {
+          this.logger[name] = jobData.getLogger(name);
+        }
+        this.logger[name].error(errorMessage);
+        finalCallback();
+        break;
+      }
+      case 'emitLoggingLog': {
+        const {
+          data: { message: logMessage, name },
+        } = message;
+        const { data: jobData } = this.jobs[id];
+        if (!this.logger[name]) {
+          this.logger[name] = jobData.getLogger(name);
+        }
+        this.logger[name].info(logMessage);
+        finalCallback();
+        break;
+      }
+      case 'emitLoggingDebug': {
+        const {
+          data: { message: debugMessage, name },
+        } = message;
+        const { data: jobData } = this.jobs[id];
+        if (!this.logger[name]) {
+          this.logger[name] = jobData.getLogger(name);
+        }
+        this.logger[name].debug(debugMessage);
         finalCallback();
         break;
       }

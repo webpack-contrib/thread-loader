@@ -31,6 +31,7 @@
     "fix": "npm-run-all -l fix:js fix:prettier",
     "test:only": "cross-env NODE_ENV=test jest --forceExit",
     "test:watch": "npm run test:only -- --watch",
+    "test:debug": "node --inspect-brk /node_modules/jest/bin/jest.js —runInBand webpack.test.js",
     "test:coverage": "npm run test:only -- --collectCoverageFrom=\"src/**/*.js\" --coverage",
     "pretest": "npm run lint",
     "test": "npm run test:coverage",
@@ -45,6 +46,8 @@
   },
   "dependencies": {
     "json-parse-better-errors": "^1.0.2",
+    "less": "^4.2.0",
+    "less-loader": "^11.1.3",
     "loader-runner": "^4.1.0",
     "neo-async": "^2.6.2",
     "schema-utils": "^4.2.0"
