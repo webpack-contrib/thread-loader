@@ -141,6 +141,26 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
             });
             nextQuestionId += 1;
           },
+          importModule: (request, options) => {
+            const promise = new Promise((resolve, reject) => {
+              callbackMap[nextQuestionId] = (error, result) => {
+                if (error) {
+                  reject(error);
+                } else {
+                  resolve(result);
+                }
+              };
+            });
+            writeJson({
+              type: 'importModule',
+              id,
+              questionId: nextQuestionId,
+              request,
+              options
+            });
+            nextQuestionId += 1;
+            return promise;
+          },
           resolve: (context, request, callback) => {
             resolveWithOptions(context, request, callback);
           },
@@ -244,6 +264,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
           sourceMap: data.sourceMap,
           target: data.target,
           minimize: data.minimize,
+          mode: data.mode,
           resourceQuery: data.resourceQuery,
           rootContext: data.rootContext,
           // eslint-disable-next-line no-underscore-dangle
