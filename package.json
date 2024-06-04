@@ -50,9 +50,9 @@
     "schema-utils": "^4.2.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.24.5",
-    "@babel/core": "^7.24.5",
-    "@babel/preset-env": "^7.24.5",
+    "@babel/cli": "^7.24.6",
+    "@babel/core": "^7.24.6",
+    "@babel/preset-env": "^7.24.6",
     "@commitlint/cli": "^17.6.7",
     "@commitlint/config-conventional": "^17.6.7",
     "@webpack-contrib/eslint-config-webpack": "^3.0.0",
@@ -78,7 +78,7 @@
     "postcss-font-magician": "^3.0.0",
     "postcss-loader": "^5.2.0",
     "prettier": "^2.8.8",
-    "sass": "^1.76.0",
+    "sass": "^1.77.4",
     "sass-loader": "^11.0.1",
     "standard-version": "^9.0.0",
     "ts-loader": "^9.5.1",
