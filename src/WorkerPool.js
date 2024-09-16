@@ -292,12 +292,14 @@ class PoolWorker {
         if (!Object.hasOwnProperty.call(jobData.loggers, data.name)) {
           jobData.loggers[data.name] = jobData.getLogger(data.name);
         }
+        finalCallback();
         break;
       }
       case 'logger': {
         const { data } = message;
         const { data: jobData } = this.jobs[id];
         jobData.loggers[data.name][data.severity](data.message);
+        finalCallback();
         break;
       }
       default: {
