@@ -45,7 +45,9 @@ test('Processes ts-loader correctly', (done) => {
 }, 30000);
 
 test('Works with less-loader', (done) => {
-  webpack(lessLoaderConfig, (err, stats) => {
+  const config = lessLoaderConfig({});
+
+  webpack(config, (err, stats) => {
     if (err) {
       // eslint-disable-next-line no-console
       console.error(err);
