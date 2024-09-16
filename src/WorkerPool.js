@@ -298,7 +298,8 @@ class PoolWorker {
       case 'logger': {
         const { data } = message;
         const { data: jobData } = this.jobs[id];
-        jobData.loggers[data.name][data.severity](data.message);
+        const logger = jobData.loggers[data.name];
+        logger[data.method](...data.args);
         finalCallback();
         break;
       }
