@@ -23,7 +23,7 @@ module.exports = (env) => {
     module: {
       rules: [
         {
-          test: /test\.js$/,
+          test: /file\.js$/,
           use: [
             env.threads !== 0 && {
               loader: path.resolve(__dirname, '../../dist/index.js'),

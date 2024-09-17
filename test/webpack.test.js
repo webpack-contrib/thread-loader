@@ -60,7 +60,7 @@ test('Works with test-loader', (done) => {
     expect(stats.compilation.warnings).toMatchSnapshot('warnings');
 
     const [testMod] = [...stats.compilation.modules].filter(
-      (i) => i.rawRequest === './test.js?q=1#hash'
+      (i) => i.rawRequest === './file.js?q=1#hash'
     );
 
     // eslint-disable-next-line no-eval, no-underscore-dangle
