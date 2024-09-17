@@ -2,7 +2,7 @@ const path = require('path');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-const threadLoader = require('../../src'); // eslint-disable-line import/no-extraneous-dependencies
+const threadLoader = require('../../dist'); // eslint-disable-line import/no-extraneous-dependencies
 
 module.exports = (env) => {
   const workerPool = {

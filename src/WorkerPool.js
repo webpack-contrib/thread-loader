@@ -234,6 +234,37 @@ class PoolWorker {
         finalCallback();
         break;
       }
+      case 'importModule': {
+        const { request, options, questionId } = message;
+        const { data } = this.jobs[id];
+
+        data
+          .importModule(request, options)
+          .then((result) => {
+            this.writeJson({
+              type: 'result',
+              id: questionId,
+              error: null,
+              result,
+            });
+          })
+          .catch((error) => {
+            this.writeJson({
+              type: 'result',
+              id: questionId,
+              error: error
+                ? {
+                    message: error.message,
+                    details: error.details,
+                    missing: error.missing,
+                  }
+                : null,
+            });
+          });
+
+        finalCallback();
+        break;
+      }
       case 'resolve': {
         const { context, request, options, questionId } = message;
         const { data } = this.jobs[id];
