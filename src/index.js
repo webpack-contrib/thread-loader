@@ -59,6 +59,7 @@ function pitch() {
       minimize: this.minimize,
       optionsContext: this.rootContext || this.options.context,
       rootContext: this.rootContext,
+      hot: this.hot,
     },
     (err, r) => {
       if (r) {

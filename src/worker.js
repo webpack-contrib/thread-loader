@@ -373,6 +373,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
           resourceFragment: data.resourceFragment,
           environment: data.environment,
           rootContext: data.rootContext,
+          hot: data.hot,
           // eslint-disable-next-line no-underscore-dangle
           _compilation: data._compilation,
           // eslint-disable-next-line no-underscore-dangle

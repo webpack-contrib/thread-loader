@@ -1,5 +1,7 @@
 const path = require('path');
 
+const webpack = require('webpack');
+
 const threadLoader = require('../../dist'); // eslint-disable-line import/no-extraneous-dependencies
 
 module.exports = (env) => {
@@ -39,5 +41,6 @@ module.exports = (env) => {
         },
       ],
     },
+    plugins: [new webpack.HotModuleReplacementPlugin()],
   };
 };
