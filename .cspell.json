@@ -18,9 +18,9 @@
     "opencollective",
     "Koppers",
     "sokra",
-    "lifecycles"
+    "lifecycles",
+    "absolutify"
   ],
-
   "ignorePaths": [
     "CHANGELOG.md",
     "package.json",

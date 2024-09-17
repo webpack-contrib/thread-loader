@@ -119,6 +119,17 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
       });
       nextQuestionId += 1;
     };
+    const importModule = (request, options, callback) => {
+      callbackMap[nextQuestionId] = callback;
+      writeJson({
+        type: 'importModule',
+        id,
+        questionId: nextQuestionId,
+        request,
+        options,
+      });
+      nextQuestionId += 1;
+    };
 
     const buildDependencies = [];
 
@@ -140,6 +151,22 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
               request,
             });
             nextQuestionId += 1;
+          },
+          // eslint-disable-next-line consistent-return
+          importModule: (request, options, callback) => {
+            if (callback) {
+              importModule(request, options, callback);
+            } else {
+              return new Promise((resolve, reject) => {
+                importModule(request, options, (err, result) => {
+                  if (err) {
+                    reject(err);
+                  } else {
+                    resolve(result);
+                  }
+                });
+              });
+            }
           },
           resolve: (context, request, callback) => {
             resolveWithOptions(context, request, callback);
@@ -343,6 +370,8 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
           target: data.target,
           minimize: data.minimize,
           resourceQuery: data.resourceQuery,
+          resourceFragment: data.resourceFragment,
+          environment: data.environment,
           rootContext: data.rootContext,
           // eslint-disable-next-line no-underscore-dangle
           _compilation: data._compilation,
