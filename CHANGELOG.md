@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.0.3](https://github.com/webpack-contrib/thread-loader/compare/v4.0.2...v4.0.3) (2024-09-17)
+
+
+### Bug Fixes
+
+* getLogger is now defined in child loader ([158d52b](https://github.com/webpack-contrib/thread-loader/commit/158d52b4a8e97d2489b305be262f1994f9eeee76))
+* pass `mode` ([#217](https://github.com/webpack-contrib/thread-loader/issues/217)) ([57c66b8](https://github.com/webpack-contrib/thread-loader/commit/57c66b8d93ac3ba547052345523b5dacb8ea255d))
+* work with `importModule` ([#218](https://github.com/webpack-contrib/thread-loader/issues/218)) ([75b9b7a](https://github.com/webpack-contrib/thread-loader/commit/75b9b7aaba709e8282e27fa8196379d1712c886f))
+
 ### [4.0.2](https://github.com/webpack-contrib/thread-loader/compare/v4.0.1...v4.0.2) (2023-05-22)
 
 
