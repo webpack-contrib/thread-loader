@@ -58,9 +58,9 @@ exports[`Works with test-loader: result 1`] = `
   "loadModule": "function",
   "loadModuleResult": {
     "map": null,
-    "source": "const test = require("./mod1");
+    "source": "const test = require('./mod1');
 
-module.exports = new URL("./style.less", import.meta.url);
+module.exports = new URL('./style.less', import.meta.url);
 ",
   },
   "loaderIndex": 0,
