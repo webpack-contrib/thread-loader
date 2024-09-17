@@ -48,6 +48,7 @@ exports[`Works with test-loader: result 1`] = `
   "getMissingDependenciesResult": [],
   "getOptions": "function",
   "getResolve": "function",
+  "hot": true,
   "importModule": "function",
   "importModuleResult1": {
     "default": "http://test.com/first/777312cffc01c1457868.less",
