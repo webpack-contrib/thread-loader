@@ -212,6 +212,103 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
 
             return options;
           },
+          getLogger: (name) => {
+            if (typeof name === 'function') {
+              // eslint-disable-next-line no-param-reassign
+              name = name();
+            }
+            function writeLoggerJson(method, args) {
+              writeJson({
+                type: 'logger',
+                id,
+                data: { name, method, args },
+              });
+            }
+            writeJson({
+              type: 'getLogger',
+              id,
+              data: { name },
+            });
+            // The logger interface should be aligned with the WebpackLogger class
+            // https://github.com/webpack/webpack/blob/v5.94.0/lib/logging/Logger.js
+            return {
+              error(...args) {
+                writeLoggerJson('error', args);
+              },
+
+              warn(...args) {
+                writeLoggerJson('warn', args);
+              },
+
+              info(...args) {
+                writeLoggerJson('info', args);
+              },
+
+              log(...args) {
+                writeLoggerJson('log', args);
+              },
+
+              debug(...args) {
+                writeLoggerJson('debug', args);
+              },
+
+              assert(...args) {
+                writeLoggerJson('assert', args);
+              },
+
+              trace(...args) {
+                writeLoggerJson('trace', args);
+              },
+
+              clear(...args) {
+                writeLoggerJson('clear', args);
+              },
+
+              status(...args) {
+                writeLoggerJson('status', args);
+              },
+
+              group(...args) {
+                writeLoggerJson('group', args);
+              },
+
+              groupCollapsed(...args) {
+                writeLoggerJson('groupCollapsed', args);
+              },
+
+              groupEnd(...args) {
+                writeLoggerJson('groupEnd', args);
+              },
+
+              profile(...args) {
+                writeLoggerJson('profile', args);
+              },
+
+              profileEnd(...args) {
+                writeLoggerJson('profileEnd', args);
+              },
+
+              time(...args) {
+                writeLoggerJson('time', args);
+              },
+
+              timeLog(...args) {
+                writeLoggerJson('timeLog', args);
+              },
+
+              timeEnd(...args) {
+                writeLoggerJson('timeEnd', args);
+              },
+
+              timeAggregate(...args) {
+                writeLoggerJson('timeAggregate', args);
+              },
+
+              timeAggregateEnd(...args) {
+                writeLoggerJson('timeAggregateEnd', args);
+              },
+            };
+          },
           emitWarning: (warning) => {
             writeJson({
               type: 'emitWarning',

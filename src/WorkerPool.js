@@ -285,6 +285,24 @@ class PoolWorker {
         finalCallback();
         break;
       }
+      case 'getLogger': {
+        // initialise logger by name in jobData
+        const { data } = message;
+        const { data: jobData } = this.jobs[id];
+        if (!Object.hasOwnProperty.call(jobData.loggers, data.name)) {
+          jobData.loggers[data.name] = jobData.getLogger(data.name);
+        }
+        finalCallback();
+        break;
+      }
+      case 'logger': {
+        const { data } = message;
+        const { data: jobData } = this.jobs[id];
+        const logger = jobData.loggers[data.name];
+        logger[data.method](...data.args);
+        finalCallback();
+        break;
+      }
       default: {
         console.error(`Unexpected worker message ${type} in WorkerPool.`);
         finalCallback();

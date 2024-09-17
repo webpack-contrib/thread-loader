@@ -21,7 +21,7 @@ module.exports = (env) => {
     },
   };
   if (+env.threads > 0) {
-    threadLoader.warmup(workerPool, ['babel-loader', 'babel-preset-env']);
+    threadLoader.warmup(workerPool, ['babel-loader', '@babel/preset-env']);
     threadLoader.warmup(workerPoolSass, [
       'sass-loader',
       'postcss-loader',
