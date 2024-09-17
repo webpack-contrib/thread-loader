@@ -213,6 +213,10 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
             return options;
           },
           getLogger: (name) => {
+            if (typeof name === 'function') {
+              // eslint-disable-next-line no-param-reassign
+              name = name();
+            }
             function writeLoggerJson(method, args) {
               writeJson({
                 type: 'logger',
