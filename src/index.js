@@ -48,6 +48,7 @@ function pitch() {
       resolve: this.resolve,
       getResolve: this.getResolve,
       target: this.target,
+      mode: this.mode,
       minimize: this.minimize,
       resourceQuery: this.resourceQuery,
       optionsContext: this.rootContext || this.options.context,

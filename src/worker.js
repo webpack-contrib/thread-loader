@@ -338,6 +338,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
           },
           webpack: true,
           'thread-loader': true,
+          mode: data.mode,
           sourceMap: data.sourceMap,
           target: data.target,
           minimize: data.minimize,
