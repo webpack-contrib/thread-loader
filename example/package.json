@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "lodash-es": "^4.17.14",
+    "lodash-es": "^4.17.21",
     "react": "^16.6.3"
   },
   "devDependencies": {
