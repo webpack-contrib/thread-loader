@@ -1,5 +1,8 @@
 const path = require('path');
 
+const normalize = (str) =>
+  str.replace(new RegExp(process.cwd(), 'g'), '<cwd>').replace(/\\/g, '/');
+
 module.exports = async function testLoader() {
   this.cacheable(false);
 
@@ -35,18 +38,24 @@ module.exports = async function testLoader() {
       webpack: this.webpack,
       sourceMap: this.sourceMap,
       target: this.target,
-      rootContext: this.rootContext,
-      context: this.context,
+      rootContext: normalize(this.rootContext),
+      context: normalize(this.context),
       environment: this.environment,
       loaderIndex: this.loaderIndex,
-      loaders: this.loaders,
-      resourcePath: this.resourcePath,
+      loaders: this.loaders.map((item) => {
+        return {
+          ...item,
+          path: normalize(item.path),
+          request: normalize(item.request),
+        };
+      }),
+      resourcePath: normalize(this.resourcePath),
       resourceQuery: this.resourceQuery,
       resourceFragment: this.resourceFragment,
-      resource: this.resource,
-      request: this.request,
-      remainingRequest: this.remainingRequest,
-      currentRequest: this.currentRequest,
+      resource: normalize(this.resource),
+      request: normalize(this.request),
+      remainingRequest: normalize(this.remainingRequest),
+      currentRequest: normalize(this.currentRequest),
       previousRequest: this.previousRequest,
       query: this.query,
       // Todo fix me
@@ -103,12 +112,13 @@ module.exports = async function testLoader() {
       addContextDependency: typeof this.addContextDependency,
       addMissingDependency: typeof this.addMissingDependency,
       getDependencies: typeof this.getDependencies,
-      getDependenciesResult: this.getDependencies(),
+      getDependenciesResult: this.getDependencies().map(normalize),
       getContextDependencies: typeof this.getContextDependencies,
-      getContextDependenciesResult: this.getContextDependencies(),
+      getContextDependenciesResult:
+        this.getContextDependencies().map(normalize),
       getMissingDependencies: typeof this.getMissingDependencies,
       getMissingDependenciesResult: this.getMissingDependencies(),
       clearDependencies: typeof this.clearDependencies,
-    }).replace(new RegExp(process.cwd(), 'g'), '<cwd>')};`
+    })};`
   );
 };
