@@ -24,7 +24,6 @@ function pitch() {
         options: { plugins: [] },
       },
       _compilation: {
-        hash: "tsst",
         outputOptions: {
           hashSalt: this._compilation.outputOptions.hashSalt,
           hashFunction: this._compilation.outputOptions.hashFunction,
