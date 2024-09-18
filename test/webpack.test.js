@@ -52,7 +52,7 @@ test('Works with less-loader', (done) => {
 }, 30000);
 
 test('Works with css-loader', (done) => {
-  const config = cssLoaderConfig({  });
+  const config = cssLoaderConfig({});
 
   webpack(config, (err, stats) => {
     if (err) {
