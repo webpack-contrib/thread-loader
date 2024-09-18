@@ -133,20 +133,22 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
 
     const buildDependencies = [];
 
-    // eslint-disable-next-line no-underscore-dangle
+    // eslint-disable-next-line no-underscore-dangle, no-param-reassign
     data._compilation.getPath = function getPath(filename, extraData = {}) {
       if (!extraData.hash) {
+        // eslint-disable-next-line no-param-reassign
         extraData = {
           // eslint-disable-next-line no-underscore-dangle
           hash: data._compilation.hash,
-          ...extraData
+          ...extraData,
         };
       }
 
-      const template = require("./template");
+      // eslint-disable-next-line global-require
+      const template = require('./template');
 
       return template(filename, extraData);
-    }
+    };
 
     loaderRunner.runLoaders(
       {
