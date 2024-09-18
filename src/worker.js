@@ -133,6 +133,23 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
 
     const buildDependencies = [];
 
+    // eslint-disable-next-line no-underscore-dangle, no-param-reassign
+    data._compilation.getPath = function getPath(filename, extraData = {}) {
+      if (!extraData.hash) {
+        // eslint-disable-next-line no-param-reassign
+        extraData = {
+          // eslint-disable-next-line no-underscore-dangle
+          hash: data._compilation.hash,
+          ...extraData,
+        };
+      }
+
+      // eslint-disable-next-line global-require
+      const template = require('./template');
+
+      return template(filename, extraData);
+    };
+
     loaderRunner.runLoaders(
       {
         loaders: data.loaders,
@@ -205,7 +222,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
             let { options } = loader;
 
             if (typeof options === 'string') {
-              if (options.substr(0, 1) === '{' && options.substr(-1) === '}') {
+              if (options.startsWith('{') && options.endsWith('}')) {
                 try {
                   options = parseJson(options);
                 } catch (e) {
@@ -358,6 +375,17 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
           },
           options: {
             context: data.optionsContext,
+          },
+          utils: {
+            createHash: (type) => {
+              // eslint-disable-next-line global-require
+              const { createHash } = require('webpack').util;
+
+              return createHash(
+                // eslint-disable-next-line no-underscore-dangle
+                type || data._compilation.outputOptions.hashFunction,
+              );
+            },
           },
           webpack: true,
           'thread-loader': true,

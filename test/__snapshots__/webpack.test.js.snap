@@ -127,7 +127,9 @@ module.exports = new URL('./style.less', import.meta.url);
   "utils": {
     "absolutify": "undefined",
     "contextify": "undefined",
-    "createHash": "undefined",
+    "createHash": "function",
+    "createHashResult": "db346d691d7acc4dc2625db19f9e3f52",
+    "createHashResult1": "4fdcca5ddb678139",
   },
   "version": 2,
   "webpack": true,
