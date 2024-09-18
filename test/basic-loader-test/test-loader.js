@@ -1,7 +1,7 @@
 const path = require('path');
 
 const normalize = (str) =>
-  str.replace(new RegExp(process.cwd(), 'g'), '<cwd>').replace(/\\/g, '/');
+  str.split(process.cwd()).join('<PROJECT_ROOT>').replace(/\\/g, '/');
 
 module.exports = async function testLoader() {
   this.cacheable(false);
