@@ -4,13 +4,15 @@ import basicLoaderConfig from './basic-loader-test/webpack.config';
 import sassLoaderConfig from './sass-loader-example/webpack.config';
 import tsLoaderConfig from './ts-loader-example/webpack.config';
 import lessLoaderConfig from './less-loader-example/webpack.config';
+import cssLoaderConfig from './css-loader-example/webpack.config';
 
 test("Processes sass-loader's @import correctly", (done) => {
   const config = sassLoaderConfig({ threads: 1 });
 
   webpack(config, (err, stats) => {
     if (err) {
-      throw err;
+      done(err);
+      return;
     }
 
     expect(err).toBe(null);
@@ -24,7 +26,8 @@ test('Processes ts-loader correctly', (done) => {
 
   webpack(config, (err, stats) => {
     if (err) {
-      throw err;
+      done(err);
+      return;
     }
 
     expect(err).toBe(null);
@@ -38,7 +41,8 @@ test('Works with less-loader', (done) => {
 
   webpack(config, (err, stats) => {
     if (err) {
-      throw err;
+      done(err);
+      return;
     }
 
     expect(err).toBe(null);
@@ -47,13 +51,28 @@ test('Works with less-loader', (done) => {
   });
 }, 30000);
 
-test.only('Works with test-loader', (done) => {
+test('Works with css-loader', (done) => {
+  const config = cssLoaderConfig({  });
+
+  webpack(config, (err, stats) => {
+    if (err) {
+      done(err);
+      return;
+    }
+
+    expect(err).toBe(null);
+    expect(stats.hasErrors()).toBe(false);
+    done();
+  });
+}, 30000);
+
+test('Works with test-loader', (done) => {
   const config = basicLoaderConfig({ threads: 1 });
 
   webpack(config, (err, stats) => {
     if (err) {
-      // eslint-disable-next-line no-console
-      console.error(err);
+      done(err);
+      return;
     }
 
     expect(stats.compilation.errors).toMatchSnapshot('errors');

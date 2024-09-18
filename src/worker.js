@@ -133,6 +133,21 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
 
     const buildDependencies = [];
 
+    // eslint-disable-next-line no-underscore-dangle
+    data._compilation.getPath = function getPath(filename, extraData = {}) {
+      if (!extraData.hash) {
+        extraData = {
+          // eslint-disable-next-line no-underscore-dangle
+          hash: data._compilation.hash,
+          ...extraData
+        };
+      }
+
+      const template = require("./template");
+
+      return template(filename, extraData);
+    }
+
     loaderRunner.runLoaders(
       {
         loaders: data.loaders,
