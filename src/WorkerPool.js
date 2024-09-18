@@ -32,7 +32,7 @@ class PoolWorker {
       {
         detached: true,
         stdio: ['ignore', 'pipe', 'pipe', 'pipe', 'pipe'],
-      }
+      },
     );
 
     this.worker.unref();
@@ -43,8 +43,8 @@ class PoolWorker {
     if (!this.worker.stdio) {
       throw new Error(
         `Failed to create the worker pool with workerId: ${workerId} and ${''}configuration: ${JSON.stringify(
-          options
-        )}. Please verify if you hit the OS open files limit.`
+          options,
+        )}. Please verify if you hit the OS open files limit.`,
       );
     }
 
@@ -125,7 +125,7 @@ class PoolWorker {
     this.readBuffer(4, (lengthReadError, lengthBuffer) => {
       if (lengthReadError) {
         console.error(
-          `Failed to communicate with worker (read length) ${lengthReadError}`
+          `Failed to communicate with worker (read length) ${lengthReadError}`,
         );
         return;
       }
@@ -136,7 +136,7 @@ class PoolWorker {
       this.readBuffer(length, (messageError, messageBuffer) => {
         if (messageError) {
           console.error(
-            `Failed to communicate with worker (read message) ${messageError}`
+            `Failed to communicate with worker (read message) ${messageError}`,
           );
           return;
         }
@@ -147,7 +147,7 @@ class PoolWorker {
         this.onWorkerMessage(message, (err) => {
           if (err) {
             console.error(
-              `Failed to communicate with worker (process message) ${err}`
+              `Failed to communicate with worker (process message) ${err}`,
             );
             return;
           }
@@ -204,7 +204,7 @@ class PoolWorker {
               return;
             }
             callback(null, result);
-          }
+          },
         );
         break;
       }
@@ -379,7 +379,7 @@ export default class WorkerPool {
     this.timeout = null;
     this.poolQueue = asyncQueue(
       this.distributeJob.bind(this),
-      options.poolParallelJobs
+      options.poolParallelJobs,
     );
     this.terminated = false;
 
@@ -441,7 +441,7 @@ export default class WorkerPool {
         nodeArgs: this.workerNodeArgs,
         parallelJobs: this.workerParallelJobs,
       },
-      () => this.onJobDone()
+      () => this.onJobDone(),
     );
     this.workers.add(newWorker);
     return newWorker;
