@@ -98,6 +98,7 @@ const runPitch = (options) =>
         getOptions: () => {
           return { workers: NaN, poolTimeout: 2000 };
         },
+        cacheable: () => {},
         async: () => (error) => {
           if (error) {
             throw error;
