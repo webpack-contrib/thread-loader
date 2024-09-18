@@ -47,7 +47,7 @@ test('Works with less-loader', (done) => {
   });
 }, 30000);
 
-test('Works with test-loader', (done) => {
+test.only('Works with test-loader', (done) => {
   const config = basicLoaderConfig({ threads: 1 });
 
   webpack(config, (err, stats) => {

@@ -71,9 +71,14 @@ module.exports = async function testLoader() {
       emitFile: typeof this.emitFile,
       addBuildDependency: typeof this.addBuildDependency,
       utils: {
-        absolutify: typeof this.absolutify,
-        contextify: typeof this.contextify,
-        createHash: typeof this.createHash,
+        absolutify: typeof this.utils.absolutify,
+        contextify: typeof this.utils.contextify,
+        createHash: typeof this.utils.createHash,
+        createHashResult: this.utils.createHash().update('test').digest('hex'),
+        createHashResult1: this.utils
+          .createHash('xxhash64')
+          .update('test')
+          .digest('hex'),
       },
       loadModule: typeof this.loadModule,
       loadModuleResult: await new Promise((resolve, reject) =>

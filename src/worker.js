@@ -205,7 +205,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
             let { options } = loader;
 
             if (typeof options === 'string') {
-              if (options.substr(0, 1) === '{' && options.substr(-1) === '}') {
+              if (options.startsWith('{') && options.endsWith('}')) {
                 try {
                   options = parseJson(options);
                 } catch (e) {
@@ -358,6 +358,17 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
           },
           options: {
             context: data.optionsContext,
+          },
+          utils: {
+            createHash: (type) => {
+              // eslint-disable-next-line global-require
+              const { createHash } = require('webpack').util;
+
+              return createHash(
+                // eslint-disable-next-line no-underscore-dangle
+                type || data._compilation.outputOptions.hashFunction,
+              );
+            },
           },
           webpack: true,
           'thread-loader': true,
