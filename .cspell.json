@@ -19,7 +19,11 @@
     "Koppers",
     "sokra",
     "lifecycles",
-    "absolutify"
+    "absolutify",
+    "filebase",
+    "chunkhash",
+    "moduleid",
+    "modulehash"
   ],
   "ignorePaths": [
     "CHANGELOG.md",
