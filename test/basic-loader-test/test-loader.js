@@ -1,6 +1,8 @@
 const path = require('path');
 
 module.exports = async function testLoader() {
+  this.cacheable(false);
+
   const options = this.getOptions();
   const callback = this.async();
 
@@ -10,6 +12,15 @@ module.exports = async function testLoader() {
   this.addDependency(require.resolve('./dep.js'));
   this.addBuildDependency(require.resolve('./build-dep.js'));
   this.addContextDependency(path.resolve(__dirname, './directory'));
+
+  const logger = this.getLogger('name');
+
+  logger.info('test message');
+
+  const logger1 = this.getLogger();
+
+  logger1.log('test message');
+
   // Todo fix me
   // this.addMissingDependency(require.resolve("./missing-dep.js"));
 
@@ -38,6 +49,7 @@ module.exports = async function testLoader() {
       currentRequest: this.currentRequest,
       previousRequest: this.previousRequest,
       query: this.query,
+      // Todo fix me
       data: this.data,
       hot: this.hot,
       cacheable: typeof this.cacheable,

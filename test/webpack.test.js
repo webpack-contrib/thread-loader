@@ -59,10 +59,17 @@ test('Works with test-loader', (done) => {
     expect(stats.compilation.errors).toMatchSnapshot('errors');
     expect(stats.compilation.warnings).toMatchSnapshot('warnings');
 
+    const logs = Array.from(stats.compilation.logging.entries())
+      .filter((item) => /file\.js\?q=1#hash/.test(item[0]))
+      .map((item) => item[1].map(({ time, ...rest }) => rest));
+
+    expect(logs).toMatchSnapshot('logs');
+
     const [testMod] = [...stats.compilation.modules].filter(
       (i) => i.rawRequest === './file.js?q=1#hash'
     );
 
+    expect(testMod.buildInfo.cacheable).toBe(false);
     // eslint-disable-next-line no-eval, no-underscore-dangle
     expect(eval(testMod._source.source())).toMatchSnapshot('result');
 

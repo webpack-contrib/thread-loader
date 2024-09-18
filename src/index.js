@@ -63,6 +63,8 @@ function pitch() {
     },
     (err, r) => {
       if (r) {
+        this.cacheable(r.cacheable);
+
         r.fileDependencies.forEach((d) => this.addDependency(d));
         r.contextDependencies.forEach((d) => this.addContextDependency(d));
         r.missingDependencies.forEach((d) => this.addMissingDependency(d));

@@ -320,8 +320,9 @@ class PoolWorker {
         // initialise logger by name in jobData
         const { data } = message;
         const { data: jobData } = this.jobs[id];
-        if (!Object.hasOwnProperty.call(jobData.loggers, data.name)) {
-          jobData.loggers[data.name] = jobData.getLogger(data.name);
+        const internalName = data.name || '__internal__';
+        if (!Object.hasOwnProperty.call(jobData.loggers, internalName)) {
+          jobData.loggers[internalName] = jobData.getLogger(data.name);
         }
         finalCallback();
         break;
@@ -329,7 +330,8 @@ class PoolWorker {
       case 'logger': {
         const { data } = message;
         const { data: jobData } = this.jobs[id];
-        const logger = jobData.loggers[data.name];
+        const internalName = data.name || '__internal__';
+        const logger = jobData.loggers[internalName];
         logger[data.method](...data.args);
         finalCallback();
         break;

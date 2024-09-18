@@ -7,6 +7,29 @@ Test Message Error],
 ]
 `;
 
+exports[`Works with test-loader: logs 1`] = `
+[
+  [
+    {
+      "args": [
+        "test message",
+      ],
+      "trace": undefined,
+      "type": "info",
+    },
+  ],
+  [
+    {
+      "args": [
+        "test message",
+      ],
+      "trace": undefined,
+      "type": "log",
+    },
+  ],
+]
+`;
+
 exports[`Works with test-loader: result 1`] = `
 {
   "addBuildDependency": "function",
