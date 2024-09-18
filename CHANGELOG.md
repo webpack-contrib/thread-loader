@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.0.4](https://github.com/webpack-contrib/thread-loader/compare/v4.0.3...v4.0.4) (2024-09-18)
+
+
+### Bug Fixes
+
+* respect cacheable ([d3bf829](https://github.com/webpack-contrib/thread-loader/commit/d3bf8294f4ff863a58091450534d6ce24fb06fe4))
+* support `hot` ([#219](https://github.com/webpack-contrib/thread-loader/issues/219)) ([2de3b64](https://github.com/webpack-contrib/thread-loader/commit/2de3b640cd5d8be674654942c97c8f8de7ed3f3e))
+* support `utils.createHash` ([#222](https://github.com/webpack-contrib/thread-loader/issues/222)) ([6bfc93c](https://github.com/webpack-contrib/thread-loader/commit/6bfc93cab75a8f44d35a7ac0b26745cda5168dfe))
+
 ### [4.0.3](https://github.com/webpack-contrib/thread-loader/compare/v4.0.2...v4.0.3) (2024-09-17)
 
 
