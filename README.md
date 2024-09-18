@@ -129,7 +129,7 @@ threadLoader.warmup(
     'babel-loader',
     'babel-preset-es2015',
     'sass-loader',
-  ]
+  ],
 );
 ```
 

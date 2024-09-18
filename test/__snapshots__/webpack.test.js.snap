@@ -50,9 +50,12 @@ exports[`Works with test-loader: result 1`] = `
   "environment": {
     "arrowFunction": true,
     "asyncFunction": true,
+    "bigIntLiteral": true,
     "const": true,
     "destructuring": true,
+    "document": true,
     "forOf": true,
+    "nodePrefixForCoreModules": true,
     "optionalChaining": true,
     "templateLiteral": true,
   },
