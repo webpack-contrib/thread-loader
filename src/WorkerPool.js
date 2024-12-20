@@ -33,7 +33,7 @@ class PoolWorker {
       {
         detached: true,
         stdio: ['ignore', 'pipe', 'pipe', 'pipe', 'pipe'],
-      }
+      },
     );
 
     this.worker.unref();
@@ -44,8 +44,8 @@ class PoolWorker {
     if (!this.worker.stdio) {
       throw new Error(
         `Failed to create the worker pool with workerId: ${workerId} and ${''}configuration: ${JSON.stringify(
-          options
-        )}. Please verify if you hit the OS open files limit.`
+          options,
+        )}. Please verify if you hit the OS open files limit.`,
       );
     }
 
@@ -146,7 +146,7 @@ class PoolWorker {
     this.readBuffer(4, (lengthReadError, lengthBuffer) => {
       if (lengthReadError) {
         console.error(
-          `Failed to communicate with worker (read length) ${lengthReadError}`
+          `Failed to communicate with worker (read length) ${lengthReadError}`,
         );
         return;
       }
@@ -157,7 +157,7 @@ class PoolWorker {
       this.readBuffer(length, (messageError, messageBuffer) => {
         if (messageError) {
           console.error(
-            `Failed to communicate with worker (read message) ${messageError}`
+            `Failed to communicate with worker (read message) ${messageError}`,
           );
           return;
         }
@@ -168,7 +168,7 @@ class PoolWorker {
         this.onWorkerMessage(message, (err) => {
           if (err) {
             console.error(
-              `Failed to communicate with worker (process message) ${err}`
+              `Failed to communicate with worker (process message) ${err}`,
             );
             return;
           }
@@ -225,7 +225,7 @@ class PoolWorker {
               return;
             }
             callback(null, result);
-          }
+          },
         );
         break;
       }
@@ -252,6 +252,37 @@ class PoolWorker {
             ],
           });
         });
+        finalCallback();
+        break;
+      }
+      case 'importModule': {
+        const { request, options, questionId } = message;
+        const { data } = this.jobs[id];
+
+        data
+          .importModule(request, options)
+          .then((result) => {
+            this.writeJson({
+              type: 'result',
+              id: questionId,
+              error: null,
+              result,
+            });
+          })
+          .catch((error) => {
+            this.writeJson({
+              type: 'result',
+              id: questionId,
+              error: error
+                ? {
+                    message: error.message,
+                    details: error.details,
+                    missing: error.missing,
+                  }
+                : null,
+            });
+          });
+
         finalCallback();
         break;
       }
@@ -306,6 +337,26 @@ class PoolWorker {
         finalCallback();
         break;
       }
+      case 'getLogger': {
+        // initialise logger by name in jobData
+        const { data } = message;
+        const { data: jobData } = this.jobs[id];
+        const internalName = data.name || '__internal__';
+        if (!Object.hasOwnProperty.call(jobData.loggers, internalName)) {
+          jobData.loggers[internalName] = jobData.getLogger(data.name);
+        }
+        finalCallback();
+        break;
+      }
+      case 'logger': {
+        const { data } = message;
+        const { data: jobData } = this.jobs[id];
+        const internalName = data.name || '__internal__';
+        const logger = jobData.loggers[internalName];
+        logger[data.method](...data.args);
+        finalCallback();
+        break;
+      }
       default: {
         console.error(`Unexpected worker message ${type} in WorkerPool.`);
         finalCallback();
@@ -350,7 +401,7 @@ export default class WorkerPool {
     this.timeout = null;
     this.poolQueue = asyncQueue(
       this.distributeJob.bind(this),
-      options.poolParallelJobs
+      options.poolParallelJobs,
     );
     this.terminated = false;
 
@@ -413,7 +464,7 @@ export default class WorkerPool {
         parallelJobs: this.workerParallelJobs,
         allowedFunctions: this.workerAllowedFunctions,
       },
-      () => this.onJobDone()
+      () => this.onJobDone(),
     );
     this.workers.add(newWorker);
     return newWorker;

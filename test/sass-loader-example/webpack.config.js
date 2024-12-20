@@ -2,7 +2,7 @@ const path = require('path');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin'); // eslint-disable-line import/no-extraneous-dependencies
 
-const threadLoader = require('../../src'); // eslint-disable-line import/no-extraneous-dependencies
+const threadLoader = require('../../dist'); // eslint-disable-line import/no-extraneous-dependencies
 
 module.exports = (env) => {
   const workerPool = {
@@ -21,7 +21,7 @@ module.exports = (env) => {
     },
   };
   if (+env.threads > 0) {
-    threadLoader.warmup(workerPool, ['babel-loader', 'babel-preset-env']);
+    threadLoader.warmup(workerPool, ['babel-loader', '@babel/preset-env']);
     threadLoader.warmup(workerPoolSass, [
       'sass-loader',
       'postcss-loader',
@@ -31,6 +31,7 @@ module.exports = (env) => {
   return {
     mode: 'none',
     context: __dirname,
+    devtool: false,
     entry: ['./index.js'],
     output: {
       path: path.resolve('dist'),

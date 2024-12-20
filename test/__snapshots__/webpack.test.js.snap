@@ -1,0 +1,144 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Works with test-loader: errors 1`] = `
+[
+  [ModuleError: Module Error (from ../../dist/index.js):
+Test Message Error],
+]
+`;
+
+exports[`Works with test-loader: logs 1`] = `
+[
+  [
+    {
+      "args": [
+        "test message",
+      ],
+      "trace": undefined,
+      "type": "info",
+    },
+  ],
+  [
+    {
+      "args": [
+        "test message",
+      ],
+      "trace": undefined,
+      "type": "log",
+    },
+  ],
+]
+`;
+
+exports[`Works with test-loader: result 1`] = `
+{
+  "addBuildDependency": "function",
+  "addContextDependency": "function",
+  "addDependency": "function",
+  "addMissingDependency": "function",
+  "async": "function",
+  "cacheable": "function",
+  "callback": "function",
+  "clearDependencies": "function",
+  "context": "<PROJECT_ROOT>/test/basic-loader-test",
+  "currentRequest": "<PROJECT_ROOT>/test/basic-loader-test/test-loader.js??ruleSet[1].rules[0].use[1]!<PROJECT_ROOT>/test/basic-loader-test/file.js?q=1#hash",
+  "data": null,
+  "dependency": "function",
+  "emitError": "function",
+  "emitFile": "undefined",
+  "emitWarning": "function",
+  "environment": {
+    "arrowFunction": true,
+    "asyncFunction": true,
+    "bigIntLiteral": true,
+    "const": true,
+    "destructuring": true,
+    "document": true,
+    "forOf": true,
+    "nodePrefixForCoreModules": true,
+    "optionalChaining": true,
+    "templateLiteral": true,
+  },
+  "getContextDependencies": "function",
+  "getContextDependenciesResult": [
+    "<PROJECT_ROOT>/test/basic-loader-test/directory",
+  ],
+  "getDependencies": "function",
+  "getDependenciesResult": [
+    "<PROJECT_ROOT>/test/basic-loader-test/file.js",
+    "<PROJECT_ROOT>/test/basic-loader-test/dep1.js",
+    "<PROJECT_ROOT>/test/basic-loader-test/dep.js",
+  ],
+  "getLogger": "function",
+  "getMissingDependencies": "function",
+  "getMissingDependenciesResult": [],
+  "getOptions": "function",
+  "getResolve": "function",
+  "hot": true,
+  "importModule": "function",
+  "importModuleResult1": {
+    "default": "http://test.com/first/777312cffc01c1457868.less",
+  },
+  "importModuleResult2": {
+    "default": "http://test.com/first/777312cffc01c1457868.less",
+  },
+  "loadModule": "function",
+  "loadModuleResult": {
+    "map": null,
+    "source": "const test = require('./mod1');
+
+module.exports = new URL('./style.less', import.meta.url);
+",
+  },
+  "loaderIndex": 0,
+  "loaders": [
+    {
+      "data": null,
+      "fragment": "",
+      "ident": "ruleSet[1].rules[0].use[1]",
+      "normalExecuted": true,
+      "options": {
+        "test": {},
+      },
+      "path": "<PROJECT_ROOT>/test/basic-loader-test/test-loader.js",
+      "pitchExecuted": true,
+      "query": "??ruleSet[1].rules[0].use[1]",
+      "request": "<PROJECT_ROOT>/test/basic-loader-test/test-loader.js??ruleSet[1].rules[0].use[1]",
+    },
+  ],
+  "mode": "none",
+  "options": {
+    "test": {},
+  },
+  "previousRequest": "",
+  "query": {
+    "test": {},
+  },
+  "remainingRequest": "<PROJECT_ROOT>/test/basic-loader-test/file.js?q=1#hash",
+  "request": "<PROJECT_ROOT>/test/basic-loader-test/test-loader.js??ruleSet[1].rules[0].use[1]!<PROJECT_ROOT>/test/basic-loader-test/file.js?q=1#hash",
+  "resolve": "function",
+  "resource": "<PROJECT_ROOT>/test/basic-loader-test/file.js?q=1#hash",
+  "resourceFragment": "#hash",
+  "resourcePath": "<PROJECT_ROOT>/test/basic-loader-test/file.js",
+  "resourceQuery": "?q=1",
+  "rootContext": "<PROJECT_ROOT>/test/basic-loader-test",
+  "sourceMap": false,
+  "target": "web",
+  "utils": {
+    "absolutify": "undefined",
+    "contextify": "undefined",
+    "createHash": "function",
+    "createHashResult": "db346d691d7acc4dc2625db19f9e3f52",
+    "createHashResult1": "4fdcca5ddb678139",
+  },
+  "version": 2,
+  "webpack": true,
+}
+`;
+
+exports[`Works with test-loader: warnings 1`] = `
+[
+  [ModuleWarning: Module Warning (from ../../dist/index.js):
+Test Message Warning],
+]
+`;

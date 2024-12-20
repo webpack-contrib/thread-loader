@@ -119,8 +119,36 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
       });
       nextQuestionId += 1;
     };
+    const importModule = (request, options, callback) => {
+      callbackMap[nextQuestionId] = callback;
+      writeJson({
+        type: 'importModule',
+        id,
+        questionId: nextQuestionId,
+        request,
+        options,
+      });
+      nextQuestionId += 1;
+    };
 
     const buildDependencies = [];
+
+    // eslint-disable-next-line no-underscore-dangle, no-param-reassign
+    data._compilation.getPath = function getPath(filename, extraData = {}) {
+      if (!extraData.hash) {
+        // eslint-disable-next-line no-param-reassign
+        extraData = {
+          // eslint-disable-next-line no-underscore-dangle
+          hash: data._compilation.hash,
+          ...extraData,
+        };
+      }
+
+      // eslint-disable-next-line global-require
+      const template = require('./template');
+
+      return template(filename, extraData);
+    };
 
     loaderRunner.runLoaders(
       {
@@ -141,6 +169,22 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
             });
             nextQuestionId += 1;
           },
+          // eslint-disable-next-line consistent-return
+          importModule: (request, options, callback) => {
+            if (callback) {
+              importModule(request, options, callback);
+            } else {
+              return new Promise((resolve, reject) => {
+                importModule(request, options, (err, result) => {
+                  if (err) {
+                    reject(err);
+                  } else {
+                    resolve(result);
+                  }
+                });
+              });
+            }
+          },
           resolve: (context, request, callback) => {
             resolveWithOptions(context, request, callback);
           },
@@ -160,7 +204,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
                       resolve(result);
                     }
                   },
-                  options
+                  options,
                 );
               });
             }
@@ -178,7 +222,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
             let { options } = loader;
 
             if (typeof options === 'string') {
-              if (options.substr(0, 1) === '{' && options.substr(-1) === '}') {
+              if (options.startsWith('{') && options.endsWith('}')) {
                 try {
                   options = parseJson(options);
                 } catch (e) {
@@ -212,6 +256,99 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
 
             return options;
           },
+          getLogger: (name) => {
+            function writeLoggerJson(method, args) {
+              writeJson({
+                type: 'logger',
+                id,
+                data: { name, method, args },
+              });
+            }
+            writeJson({
+              type: 'getLogger',
+              id,
+              data: { name },
+            });
+            // The logger interface should be aligned with the WebpackLogger class
+            // https://github.com/webpack/webpack/blob/v5.94.0/lib/logging/Logger.js
+            return {
+              error(...args) {
+                writeLoggerJson('error', args);
+              },
+
+              warn(...args) {
+                writeLoggerJson('warn', args);
+              },
+
+              info(...args) {
+                writeLoggerJson('info', args);
+              },
+
+              log(...args) {
+                writeLoggerJson('log', args);
+              },
+
+              debug(...args) {
+                writeLoggerJson('debug', args);
+              },
+
+              assert(...args) {
+                writeLoggerJson('assert', args);
+              },
+
+              trace(...args) {
+                writeLoggerJson('trace', args);
+              },
+
+              clear(...args) {
+                writeLoggerJson('clear', args);
+              },
+
+              status(...args) {
+                writeLoggerJson('status', args);
+              },
+
+              group(...args) {
+                writeLoggerJson('group', args);
+              },
+
+              groupCollapsed(...args) {
+                writeLoggerJson('groupCollapsed', args);
+              },
+
+              groupEnd(...args) {
+                writeLoggerJson('groupEnd', args);
+              },
+
+              profile(...args) {
+                writeLoggerJson('profile', args);
+              },
+
+              profileEnd(...args) {
+                writeLoggerJson('profileEnd', args);
+              },
+
+              time(...args) {
+                writeLoggerJson('time', args);
+              },
+
+              timeLog(...args) {
+                writeLoggerJson('timeLog', args);
+              },
+
+              timeEnd(...args) {
+                writeLoggerJson('timeEnd', args);
+              },
+
+              timeAggregate(...args) {
+                writeLoggerJson('timeAggregate', args);
+              },
+
+              timeAggregateEnd(...args) {
+                writeLoggerJson('timeAggregateEnd', args);
+              },
+            };
+          },
           emitWarning: (warning) => {
             writeJson({
               type: 'emitWarning',
@@ -239,13 +376,33 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
           options: {
             context: data.optionsContext,
           },
+          utils: {
+            createHash: (type) => {
+              // eslint-disable-next-line global-require
+              const { createHash } = require('webpack').util;
+
+              return createHash(
+                // eslint-disable-next-line no-underscore-dangle
+                type || data._compilation.outputOptions.hashFunction,
+              );
+            },
+          },
           webpack: true,
           'thread-loader': true,
+          mode: data.mode,
           sourceMap: data.sourceMap,
           target: data.target,
           minimize: data.minimize,
           resourceQuery: data.resourceQuery,
+          resourceFragment: data.resourceFragment,
+          environment: data.environment,
           rootContext: data.rootContext,
+          hot: data.hot,
+          // eslint-disable-next-line no-underscore-dangle
+          _compilation: data._compilation,
+          // eslint-disable-next-line no-underscore-dangle
+          _compiler: data._compiler,
+          resourcePath: data.resourcePath,
         },
       },
       (err, lrResult) => {
@@ -297,7 +454,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
           writePipeWrite(buffer);
         });
         setImmediate(taskCallback);
-      }
+      },
     );
   } catch (e) {
     writeJson({
@@ -356,7 +513,7 @@ function readNextMessage() {
   readBuffer(readPipe, 4, (lengthReadError, lengthBuffer) => {
     if (lengthReadError) {
       console.error(
-        `Failed to communicate with main process (read length) ${lengthReadError}`
+        `Failed to communicate with main process (read length) ${lengthReadError}`,
       );
       return;
     }
@@ -375,7 +532,7 @@ function readNextMessage() {
 
       if (messageError) {
         console.error(
-          `Failed to communicate with main process (read message) ${messageError}`
+          `Failed to communicate with main process (read message) ${messageError}`,
         );
         return;
       }

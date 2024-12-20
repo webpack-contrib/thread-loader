@@ -1,9 +1,7 @@
-import loaderUtils from 'loader-utils';
-
 import { getPool } from './workerPools';
 
 function pitch() {
-  const options = loaderUtils.getOptions(this);
+  const options = this.getOptions();
   const workerPool = getPool(options);
 
   if (!workerPool.isAbleToRun()) {
@@ -21,21 +19,52 @@ function pitch() {
           ident: l.ident,
         };
       }),
-      resource: this.resourcePath + (this.resourceQuery || ''),
+      _compiler: {
+        fsStartTime: this._compiler.fsStartTime,
+        options: { plugins: [] },
+      },
+      _compilation: {
+        outputOptions: {
+          hashSalt: this._compilation.outputOptions.hashSalt,
+          hashFunction: this._compilation.outputOptions.hashFunction,
+          hashDigest: this._compilation.outputOptions.hashDigest,
+          hashDigestLength: this._compilation.outputOptions.hashDigestLength,
+        },
+        options: {
+          devtool:
+            this._compilation &&
+            this._compilation.options &&
+            this._compilation.options.devtool,
+        },
+      },
+      resourcePath: this.resourcePath,
+      resourceQuery: this.resourceQuery,
+      resourceFragment: this.resourceFragment,
+      environment: this.environment,
+      resource:
+        this.resourcePath +
+        (this.resourceQuery || '') +
+        (this.resourceFragment || ''),
       sourceMap: this.sourceMap,
       emitError: this.emitError,
       emitWarning: this.emitWarning,
+      getLogger: this.getLogger,
+      loggers: {},
       loadModule: this.loadModule,
+      importModule: this.importModule,
       resolve: this.resolve,
       getResolve: this.getResolve,
       target: this.target,
+      mode: this.mode,
       minimize: this.minimize,
-      resourceQuery: this.resourceQuery,
       optionsContext: this.rootContext || this.options.context,
       rootContext: this.rootContext,
+      hot: this.hot,
     },
     (err, r) => {
       if (r) {
+        this.cacheable(r.cacheable);
+
         r.fileDependencies.forEach((d) => this.addDependency(d));
         r.contextDependencies.forEach((d) => this.addContextDependency(d));
         r.missingDependencies.forEach((d) => this.addMissingDependency(d));
@@ -43,7 +72,7 @@ function pitch() {
           // Compatibility with webpack v4
           this.addBuildDependency
             ? this.addBuildDependency(d)
-            : this.addDependency(d)
+            : this.addDependency(d),
         );
       }
 
@@ -53,7 +82,7 @@ function pitch() {
       }
 
       callback(null, ...r.result);
-    }
+    },
   );
 }
 

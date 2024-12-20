@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.0.4](https://github.com/webpack-contrib/thread-loader/compare/v4.0.3...v4.0.4) (2024-09-18)
+
+
+### Bug Fixes
+
+* respect cacheable ([d3bf829](https://github.com/webpack-contrib/thread-loader/commit/d3bf8294f4ff863a58091450534d6ce24fb06fe4))
+* support `hot` ([#219](https://github.com/webpack-contrib/thread-loader/issues/219)) ([2de3b64](https://github.com/webpack-contrib/thread-loader/commit/2de3b640cd5d8be674654942c97c8f8de7ed3f3e))
+* support `utils.createHash` ([#222](https://github.com/webpack-contrib/thread-loader/issues/222)) ([6bfc93c](https://github.com/webpack-contrib/thread-loader/commit/6bfc93cab75a8f44d35a7ac0b26745cda5168dfe))
+
+### [4.0.3](https://github.com/webpack-contrib/thread-loader/compare/v4.0.2...v4.0.3) (2024-09-17)
+
+
+### Bug Fixes
+
+* getLogger is now defined in child loader ([158d52b](https://github.com/webpack-contrib/thread-loader/commit/158d52b4a8e97d2489b305be262f1994f9eeee76))
+* pass `mode` ([#217](https://github.com/webpack-contrib/thread-loader/issues/217)) ([57c66b8](https://github.com/webpack-contrib/thread-loader/commit/57c66b8d93ac3ba547052345523b5dacb8ea255d))
+* work with `importModule` ([#218](https://github.com/webpack-contrib/thread-loader/issues/218)) ([75b9b7a](https://github.com/webpack-contrib/thread-loader/commit/75b9b7aaba709e8282e27fa8196379d1712c886f))
+
+### [4.0.2](https://github.com/webpack-contrib/thread-loader/compare/v4.0.1...v4.0.2) (2023-05-22)
+
+
+### Bug Fixes
+
+* compatibility with ts-loader ([#183](https://github.com/webpack-contrib/thread-loader/issues/183)) ([cbc9722](https://github.com/webpack-contrib/thread-loader/commit/cbc97221ca9f625b0b7d53d2570fb2c34d663c3b))
+
+### [4.0.1](https://github.com/webpack-contrib/thread-loader/compare/v4.0.0...v4.0.1) (2023-04-19)
+
+
+### Bug Fixes
+
+* parsing circular json ([#163](https://github.com/webpack-contrib/thread-loader/issues/163)) ([71af48d](https://github.com/webpack-contrib/thread-loader/commit/71af48d18da286f7105a25a4adc9e48ae73e6918))
+
+## [4.0.0](https://github.com/webpack-contrib/thread-loader/compare/v3.0.4...v4.0.0) (2023-04-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* minimum supported `Node.js` version is `16.10.0`
+* minimum supported `webpack` version is `5`
+
 ### [3.0.4](https://github.com/webpack-contrib/thread-loader/compare/v3.0.3...v3.0.4) (2021-05-10)
 
 
