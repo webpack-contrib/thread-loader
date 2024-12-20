@@ -22,6 +22,7 @@ function getPool(options) {
     poolTimeout: options.poolTimeout || 500,
     poolParallelJobs: options.poolParallelJobs || 200,
     poolRespawn: options.poolRespawn || false,
+    workerAllowedFunctions: options.workerAllowedFunctions || [],
   };
   const tpKey = JSON.stringify(workerPoolOptions);
 
