@@ -95,7 +95,7 @@ use: [
       // can be set to Infinity for watching builds to keep workers alive
       poolTimeout: 2000,
 
-      // number of jobs the poll distributes to the workers
+      // number of jobs the pool distributes to the workers
       // defaults to 200
       // decrease of less efficient but more fair distribution
       poolParallelJobs: 50,
