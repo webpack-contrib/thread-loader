@@ -92,7 +92,7 @@ const replacer = (value, allowEmpty) => {
     if (value === null || value === undefined) {
       if (!allowEmpty) {
         throw new Error(
-          `Path variable ${match} not implemented in this context: ${input}`,
+          `Path variable ${match} not implemented in this context: ${input}`
         );
       }
 
@@ -174,8 +174,8 @@ const replacePathVariables = (path, data, assetInfo) => {
       deprecated(
         replacer(base),
         '[filebase] is now [base]',
-        'DEP_WEBPACK_TEMPLATE_PATH_PLUGIN_REPLACE_PATH_VARIABLES_FILENAME',
-      ),
+        'DEP_WEBPACK_TEMPLATE_PATH_PLUGIN_REPLACE_PATH_VARIABLES_FILENAME'
+      )
     );
   }
 
@@ -193,7 +193,7 @@ const replacePathVariables = (path, data, assetInfo) => {
       replacer(data.hash),
       data.hashWithLength,
       assetInfo,
-      'fullhash',
+      'fullhash'
     );
 
     replacements.set('fullhash', hashReplacer);
@@ -204,8 +204,8 @@ const replacePathVariables = (path, data, assetInfo) => {
       deprecated(
         hashReplacer,
         '[hash] is now [fullhash] (also consider using [chunkhash] or [contenthash], see documentation for details)',
-        'DEP_WEBPACK_TEMPLATE_PATH_PLUGIN_REPLACE_PATH_VARIABLES_HASH',
-      ),
+        'DEP_WEBPACK_TEMPLATE_PATH_PLUGIN_REPLACE_PATH_VARIABLES_HASH'
+      )
     );
   }
 
@@ -229,14 +229,14 @@ const replacePathVariables = (path, data, assetInfo) => {
       // eslint-disable-next-line no-undefined
       'hashWithLength' in chunk ? chunk.hashWithLength : undefined,
       assetInfo,
-      'chunkhash',
+      'chunkhash'
     );
     const contenthashReplacer = hashLength(
       replacer(
         data.contentHash ||
           (contentHashType &&
             chunk.contentHash &&
-            chunk.contentHash[contentHashType]),
+            chunk.contentHash[contentHashType])
       ),
       data.contentHashWithLength ||
         ('contentHashWithLength' in chunk && chunk.contentHashWithLength
@@ -244,7 +244,7 @@ const replacePathVariables = (path, data, assetInfo) => {
           : // eslint-disable-next-line no-undefined
             undefined),
       assetInfo,
-      'contenthash',
+      'contenthash'
     );
 
     replacements.set('id', idReplacer);
@@ -272,27 +272,27 @@ const replacePathVariables = (path, data, assetInfo) => {
         module instanceof Module
           ? /** @type {ModuleId} */
             (/** @type {ChunkGraph} */ (chunkGraph).getModuleId(module))
-          : module.id,
-      ),
+          : module.id
+      )
     );
     const moduleHashReplacer = hashLength(
       replacer(() =>
         module instanceof Module
           ? /** @type {ChunkGraph} */
             (chunkGraph).getRenderedModuleHash(module, data.runtime)
-          : module.hash,
+          : module.hash
       ),
       // eslint-disable-next-line no-undefined
       'hashWithLength' in module ? module.hashWithLength : undefined,
       assetInfo,
-      'modulehash',
+      'modulehash'
     );
     const contentHashReplacer = hashLength(
       replacer(/** @type {string} */ (data.contentHash)),
       // eslint-disable-next-line no-undefined
       undefined,
       assetInfo,
-      'contenthash',
+      'contenthash'
     );
 
     replacements.set('id', idReplacer);
@@ -300,7 +300,7 @@ const replacePathVariables = (path, data, assetInfo) => {
     replacements.set('contenthash', contentHashReplacer);
     replacements.set(
       'hash',
-      data.contentHash ? contentHashReplacer : moduleHashReplacer,
+      data.contentHash ? contentHashReplacer : moduleHashReplacer
     );
     // Legacy
     replacements.set(
@@ -308,8 +308,8 @@ const replacePathVariables = (path, data, assetInfo) => {
       deprecated(
         idReplacer,
         '[moduleid] is now [id]',
-        'DEP_WEBPACK_TEMPLATE_PATH_PLUGIN_REPLACE_PATH_VARIABLES_MODULE_ID',
-      ),
+        'DEP_WEBPACK_TEMPLATE_PATH_PLUGIN_REPLACE_PATH_VARIABLES_MODULE_ID'
+      )
     );
   }
 
@@ -320,7 +320,7 @@ const replacePathVariables = (path, data, assetInfo) => {
   if (typeof data.runtime === 'string') {
     replacements.set(
       'runtime',
-      replacer(() => prepareId(/** @type {string} */ (data.runtime))),
+      replacer(() => prepareId(/** @type {string} */ (data.runtime)))
     );
   } else {
     replacements.set('runtime', replacer('_'));
