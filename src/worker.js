@@ -204,7 +204,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
                       resolve(result);
                     }
                   },
-                  options
+                  options,
                 );
               });
             }
@@ -383,7 +383,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
 
               return createHash(
                 // eslint-disable-next-line no-underscore-dangle
-                type || data._compilation.outputOptions.hashFunction
+                type || data._compilation.outputOptions.hashFunction,
               );
             },
           },
@@ -454,7 +454,7 @@ const queue = asyncQueue(({ id, data }, taskCallback) => {
           writePipeWrite(buffer);
         });
         setImmediate(taskCallback);
-      }
+      },
     );
   } catch (e) {
     writeJson({
@@ -513,7 +513,7 @@ function readNextMessage() {
   readBuffer(readPipe, 4, (lengthReadError, lengthBuffer) => {
     if (lengthReadError) {
       console.error(
-        `Failed to communicate with main process (read length) ${lengthReadError}`
+        `Failed to communicate with main process (read length) ${lengthReadError}`,
       );
       return;
     }
@@ -532,7 +532,7 @@ function readNextMessage() {
 
       if (messageError) {
         console.error(
-          `Failed to communicate with main process (read message) ${messageError}`
+          `Failed to communicate with main process (read message) ${messageError}`,
         );
         return;
       }

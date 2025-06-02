@@ -104,8 +104,8 @@ const runPitch = (options) =>
             throw error;
           }
         },
-      }
-    )
+      },
+    ),
   );
 
 // it('runs pitch successfully when workPool not throw an error', () => {
