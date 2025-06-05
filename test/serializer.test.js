@@ -7,7 +7,7 @@ test('round-trips plain objects', () => {
       b: 'foo',
       c: [null, false],
     },
-    replacer
+    replacer,
   );
   expect(JSON.parse(json, reviver)).toEqual({
     a: 1,
@@ -22,7 +22,7 @@ test('round-trips regular expressions', () => {
       r: /hoge/g,
       s: /^(\w\s)+$/m,
     },
-    replacer
+    replacer,
   );
   expect(JSON.parse(json, reviver)).toEqual({
     r: /hoge/g,

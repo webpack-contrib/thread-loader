@@ -85,7 +85,7 @@ test('Works with test-loader', (done) => {
     expect(logs).toMatchSnapshot('logs');
 
     const [testMod] = [...stats.compilation.modules].filter(
-      (i) => i.rawRequest === './file.js?q=1#hash'
+      (i) => i.rawRequest === './file.js?q=1#hash',
     );
 
     expect(testMod.buildInfo.cacheable).toBe(false);
