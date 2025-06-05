@@ -18,7 +18,7 @@ describe('workerPool', () => {
     const workerPool = new WorkerPool({});
     expect(() => workerPool.createWorker()).toThrowErrorMatchingSnapshot();
     expect(() => workerPool.createWorker()).toThrowError(
-      'Please verify if you hit the OS open files limit',
+      'Please verify if you hit the OS open files limit'
     );
   });
 
@@ -62,7 +62,7 @@ describe('workerPool', () => {
     expect(() => workerPool.createWorker()).not.toThrow();
 
     const nonSanitizedNodeArgs = childProcess.spawn.mock.calls[0][1].filter(
-      (opt) => !opt,
+      (opt) => !opt
     );
     expect(nonSanitizedNodeArgs.length).toEqual(0);
   });
