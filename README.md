@@ -130,7 +130,7 @@ threadLoader.warmup(
     'babel-loader',
     '@babel/preset-env',
     'sass-loader',
-  ],
+  ]
 );
 ```
 

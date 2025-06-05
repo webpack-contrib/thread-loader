@@ -89,7 +89,7 @@ module.exports = async function testLoader() {
           }
 
           resolve({ source, map, mod });
-        }),
+        })
       ),
       importModule: typeof this.importModule,
       importModuleResult1: await this.importModule('./mod.js', {
@@ -108,8 +108,8 @@ module.exports = async function testLoader() {
             }
 
             resolve(result);
-          },
-        ),
+          }
+        )
       ),
       callback: typeof this.callback,
       addDependency: typeof this.addDependency,
@@ -124,6 +124,6 @@ module.exports = async function testLoader() {
       getMissingDependencies: typeof this.getMissingDependencies,
       getMissingDependenciesResult: this.getMissingDependencies(),
       clearDependencies: typeof this.clearDependencies,
-    })};`,
+    })};`
   );
 };

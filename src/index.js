@@ -72,7 +72,7 @@ function pitch() {
           // Compatibility with webpack v4
           this.addBuildDependency
             ? this.addBuildDependency(d)
-            : this.addDependency(d),
+            : this.addDependency(d)
         );
       }
 
@@ -82,7 +82,7 @@ function pitch() {
       }
 
       callback(null, ...r.result);
-    },
+    }
   );
 }
 
