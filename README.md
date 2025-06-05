@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://webpack.js.org/">
-    <img width="200" height="200" vspace="" hspace="25" src="https://cdn.rawgit.com/webpack/media/e7485eb2/logo/icon-square-big.svg">
+    <img width="200" height="200" hspace="25" src="https://cdn.rawgit.com/webpack/media/e7485eb2/logo/icon-square-big.svg">
   </a>
 </div>
 
@@ -13,7 +13,7 @@
 
 # thread-loader
 
-Runs the following loaders in a worker pool.
+Runs the specified loaders in a worker pool.
 
 ## Getting Started
 
@@ -33,17 +33,18 @@ or
 pnpm add -D thread-loader
 ```
 
-Put this loader in front of other loaders. The following loaders run in a worker pool.
+Put this loader in front of other loaders.
+The following loaders run in a worker pool.
 
-Loaders running in a worker pool are limited. Examples:
+Loaders running in a worker pool have limitations. Examples:
 
 - Loaders cannot emit files.
-- Loaders cannot use custom loader API (i. e. by plugins).
-- Loaders cannot access the webpack options.
+- Loaders cannot use custom loader APIs (i.e. by plugins).
+- Loaders cannot access webpack options.
 
-Each worker is a separate node.js process, which has an overhead of ~600ms. There is also an overhead of inter-process communication.
+Each worker is a separate Node.js process, which has an overhead of ~600ms. There is also additional overhead from inter-process communication.
 
-Use this loader only for expensive operations!
+> Use this loader only for expensive operations!
 
 ### Examples
 
@@ -97,11 +98,11 @@ use: [
 
       // number of jobs the pool distributes to the workers
       // defaults to 200
-      // decrease of less efficient but more fair distribution
+      // decrease for less efficient but more fair distribution
       poolParallelJobs: 50,
 
       // name of the pool
-      // can be used to create different pools with elsewise identical options
+      // can be used to create different pools with otherwise identical options
       name: 'my-pool',
     },
   },
@@ -111,9 +112,9 @@ use: [
 
 **prewarming**
 
-To prevent the high delay when booting workers it possible to warmup the worker pool.
+To prevent the high delays when booting workers, it is possible to warm up the worker pool.
 
-This boots the max number of workers in the pool and loads specified modules into the node.js module cache.
+This boots the max number of workers in the pool and loads the specified modules into the Node.js module cache.
 
 ```js
 const threadLoader = require('thread-loader');
@@ -125,9 +126,9 @@ threadLoader.warmup(
   },
   [
     // modules to load
-    // can be any module, i. e.
+    // can be any module, i.e.
     'babel-loader',
-    'babel-preset-es2015',
+    '@babel/preset-env',
     'sass-loader',
   ],
 );
@@ -135,7 +136,8 @@ threadLoader.warmup(
 
 ## Contributing
 
-Please take a moment to read our contributing guidelines if you haven't yet done so.
+We welcome all contributions!
+If you're new here, please take a moment to review our contributing guidelines before submitting issues or pull requests.
 
 [CONTRIBUTING](./.github/CONTRIBUTING.md)
 
