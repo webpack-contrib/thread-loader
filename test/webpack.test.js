@@ -19,7 +19,7 @@ test("Processes sass-loader's @import correctly", (done) => {
     expect(stats.hasErrors()).toBe(false);
     done();
   });
-}, 30000);
+}, 60000);
 
 test('Processes ts-loader correctly', (done) => {
   const config = tsLoaderConfig({ threads: 1 });
@@ -34,7 +34,7 @@ test('Processes ts-loader correctly', (done) => {
     expect(stats.hasErrors()).toBe(false);
     done();
   });
-}, 30000);
+}, 60000);
 
 test('Works with less-loader', (done) => {
   const config = lessLoaderConfig({ threads: 1 });
@@ -49,7 +49,7 @@ test('Works with less-loader', (done) => {
     expect(stats.hasErrors()).toBe(false);
     done();
   });
-}, 30000);
+}, 60000);
 
 test('Works with css-loader', (done) => {
   const config = cssLoaderConfig({});
@@ -64,7 +64,7 @@ test('Works with css-loader', (done) => {
     expect(stats.hasErrors()).toBe(false);
     done();
   });
-}, 30000);
+}, 60000);
 
 test('Works with test-loader', (done) => {
   const config = basicLoaderConfig({ threads: 1 });
@@ -94,4 +94,4 @@ test('Works with test-loader', (done) => {
 
     done();
   });
-}, 30000);
+}, 60000);

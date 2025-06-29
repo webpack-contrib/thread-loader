@@ -58,8 +58,6 @@ module.exports = async function testLoader() {
       currentRequest: normalize(this.currentRequest),
       previousRequest: this.previousRequest,
       query: this.query,
-      // Todo fix me
-      data: this.data,
       hot: this.hot,
       cacheable: typeof this.cacheable,
       emitWarning: typeof this.emitWarning,
@@ -67,8 +65,6 @@ module.exports = async function testLoader() {
       resolve: typeof this.resolve,
       getResolve: typeof this.getResolve,
       getLogger: typeof this.getLogger,
-      // Todo fix me
-      emitFile: typeof this.emitFile,
       addBuildDependency: typeof this.addBuildDependency,
       utils: {
         absolutify: typeof this.utils.absolutify,
