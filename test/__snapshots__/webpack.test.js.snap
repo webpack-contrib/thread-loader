@@ -42,8 +42,10 @@ exports[`Works with test-loader: result 1`] = `
   "clearDependencies": "function",
   "context": "<PROJECT_ROOT>/test/basic-loader-test",
   "currentRequest": "<PROJECT_ROOT>/test/basic-loader-test/test-loader.js??ruleSet[1].rules[0].use[1]!<PROJECT_ROOT>/test/basic-loader-test/file.js?q=1#hash",
+  "data": null,
   "dependency": "function",
   "emitError": "function",
+  "emitFile": "undefined",
   "emitWarning": "function",
   "environment": {
     "arrowFunction": true,
