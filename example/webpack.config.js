@@ -12,6 +12,7 @@ module.exports = (env = {}) => {
     poolTimeout: env.watch ? Infinity : 2000,
   };
   const workerPoolSass = {
+    workerAllowedFunctions: ['cssLoaderGetLocalIdent'],
     workers: +env.threads,
     workerParallelJobs: 2,
     poolTimeout: env.watch ? Infinity : 2000,
@@ -49,6 +50,17 @@ module.exports = (env = {}) => {
             env.threads !== 0 && {
               loader: path.resolve(__dirname, '../dist/index.js'),
               options: workerPoolSass,
+            },
+            {
+              loader: 'css-loader',
+              options: {
+                modules: {
+                  getLocalIdent: function cssLoaderGetLocalIdent() {
+                    console.log('getLocalIdent called');
+                    return null;
+                  },
+                },
+              },
             },
             'css-loader',
             'sass-loader',
